@@ -18,7 +18,7 @@ export default{
   async created(){
     console.log('created')
     try{
-      const response = await fetch ('/functions/listen_deployer');
+      const response = await fetch ('https://tradetrust-app.netlify.app/.netlify/functions/listen_deployer');
       if (!response.ok){
         throw new Error('Network response not ok');
       }

@@ -137,7 +137,11 @@ export default async (request,context) => {
 
     const jsonString = JSON.stringify(events, bigintReplacer, 2);
     return new Response(jsonString, {
-        headers: { 'Content-Type': 'application/json'}
+        headers: { 'Content-Type': 'application/json',
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Methods": "GET, POST, OPTION",
+        }
     })
         
     } catch(error){
