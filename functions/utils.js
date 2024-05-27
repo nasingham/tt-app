@@ -19,7 +19,7 @@ export function processEventsDeployer(events) {
     });
 
     return {
-        // numDeployments,
+        numDeployments,
         // uniqueDeployer: Array.from(uniqueDeployer),
         returnValues,
         // uniqueFactory: Array.from(uniqueFactory)
