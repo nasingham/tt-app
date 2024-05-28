@@ -1,6 +1,6 @@
 // const {Web3}  = require('web3');
 import Web3 from 'web3';
-import { processEventsTitleEscrow } from '../utils';
+import { processEventsTitleEscrow } from './utils';
 
 const web3 = new Web3('https://eth-sepolia.g.alchemy.com/v2/oYTceCr2171uweAFpcDci_A-434gf1Qj');
 const titleEscrowFactory = "0x5aA71Cc9559bC5e54E9504a81496d9F8454721F5"

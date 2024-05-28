@@ -36,7 +36,7 @@ export default{
   async created(){
     console.log('created')
     try{
-      const response = await fetch ('./.netlify/functions/sepolia/listen_combine');
+      const response = await fetch ('./.netlify/functions/sepolia-listen_combine');
       if (!response.ok){
         throw new Error('Network response not ok');
       }

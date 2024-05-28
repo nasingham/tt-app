@@ -1,6 +1,6 @@
 // const {Web3}  = require('web3');
 import Web3 from 'web3';
-import { processEventsDeployer } from '../utils';
+import { processEventsDeployer } from './utils';
 
 const web3 = new Web3('https://eth-sepolia.g.alchemy.com/v2/oYTceCr2171uweAFpcDci_A-434gf1Qj');
 const deployer = "0x9eBC30E7506E6Ce36eAc5507FCF0121BaF7AeA57"
@@ -118,7 +118,6 @@ const contractABI = [
 
 
 export default async (request,context) => {
-
     try{  
         await web3.eth.net.isListening();
         console.log('listening');

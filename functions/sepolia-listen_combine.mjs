@@ -1,9 +1,9 @@
-import { combine } from "../utils"
+import { combine } from "./utils"
 
 export default async(request,context) => {
     try{
-        const fetch_deployments = await fetch('http://localhost:8888/.netlify/functions/sepolia/listen_deployer');
-        const fetch_titleCreated = await fetch('http://localhost:8888/.netlify/functions/sepolia/listen_titleEscrow');
+        const fetch_deployments = await fetch('http://localhost:8888/.netlify/functions/sepolia-listen_deployer');
+        const fetch_titleCreated = await fetch('http://localhost:8888/.netlify/functions/sepolia-listen_titleEscrow');
         if (!fetch_deployments.ok || !fetch_titleCreated.ok){
             throw new Error ("Error fetching in combine");
         }
