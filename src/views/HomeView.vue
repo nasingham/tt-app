@@ -1,6 +1,7 @@
 <template>
   <v-btn @click="showSepolia">Sepolia</v-btn>
   <v-btn @click="showMainnet">Ethereum</v-btn>
+  <v-btn @click="showStability">Stability GTN</v-btn>
   <div v-if="Sepolia" class="summary">
     <h2>Total number of deployments: {{ sepoliaData.deployments.numDeployments }}</h2>
     <h2>Total number of Title Escrows created: {{ sepoliaData.numCreated }}</h2>
@@ -45,6 +46,28 @@
       </v-card>
     </div>
   </div>
+  <div v-if="Stability" class="summary">
+    <h2>Total number of deployments: {{ stabilityData.deployments.numDeployments }}</h2>
+    <h2>Total number of Title Escrows created: {{ stabilityData.numCreated }}</h2>
+  
+    <div class="uniques">
+      <v-card  title="List of unique deployers" class="unique-deployers">
+        <v-virtual-scroll :height="300" :items= stabilityData.deployments.uniqueDeployer :item-height="5" :width="400" >
+          <template v-slot:default="{ item }">
+            {{ item }}
+          </template>
+        </v-virtual-scroll>
+      </v-card>
+      <v-card  title="List of Title Escrow Factories" class="unique-factory">
+        <h3>List of Title Escrow Factories</h3>
+        <v-virtual-scroll :height="300" :items= stabilityData.deployments.uniqueFactory :item-height="5" :width="400" >
+          <template v-slot:default="{ item }">
+            {{ item }}
+          </template>
+        </v-virtual-scroll>
+      </v-card>
+    </div>
+  </div>
 </template>
 
 
@@ -61,6 +84,7 @@ export default{
 
     const Sepolia = ref(false);
     const Mainnet = ref(false);
+    const Stability = ref(false);
 
     const showSepolia = async () => {
       Sepolia.value = true;
@@ -100,13 +124,35 @@ export default{
     }
     }
 
+    const showStability = async () => {
+      Stability.value = true;
+      try{
+      const response = await fetch ('./.netlify/functions/stability-listen_combine');
+      if (!response.ok){
+        throw new Error('Network response not ok');
+      }
+      console.log(response);
+      const result = await response.json();
+      console.log(result);
+      this.stabilityData = result
+
+    
+    } catch (error){
+      console.log(error)
+      this.error = error.toString();
+    }
+    }
+
     return{
       sepoliaData : null,
       mainnetData : null,
+      stabilityData : null,
       showSepolia,
       Sepolia,
       Mainnet,
+      Stability,
       showMainnet,
+      showStability,
     };
   }
 }
