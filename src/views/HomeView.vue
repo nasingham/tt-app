@@ -1,11 +1,13 @@
 <template>
-  <div class="summary">
-    <h2>Total number of deployments: {{ data.deployments.numDeployments }}</h2>
-    <h2>Total number of Title Escrows created: {{ data.numCreated }}</h2>
+  <v-btn @click="showSepolia">Sepolia</v-btn>
+  <v-btn @click="showMainnet">Ethereum</v-btn>
+  <div v-if="Sepolia" class="summary">
+    <h2>Total number of deployments: {{ sepoliaData.deployments.numDeployments }}</h2>
+    <h2>Total number of Title Escrows created: {{ sepoliaData.numCreated }}</h2>
   
     <div class="uniques">
       <v-card  title="List of unique deployers" class="unique-deployers">
-        <v-virtual-scroll :height="300" :items= data.deployments.uniqueDeployer :item-height="5" :width="400" >
+        <v-virtual-scroll :height="300" :items= sepoliaData.deployments.uniqueDeployer :item-height="5" :width="400" >
           <template v-slot:default="{ item }">
             {{ item }}
           </template>
@@ -13,7 +15,29 @@
       </v-card>
       <v-card  title="List of Title Escrow Factories" class="unique-factory">
         <h3>List of Title Escrow Factories</h3>
-        <v-virtual-scroll :height="300" :items= data.deployments.uniqueFactory :item-height="5" :width="400" >
+        <v-virtual-scroll :height="300" :items= sepoliaData.deployments.uniqueFactory :item-height="5" :width="400" >
+          <template v-slot:default="{ item }">
+            {{ item }}
+          </template>
+        </v-virtual-scroll>
+      </v-card>
+    </div>
+  </div>
+  <div v-if="Mainnet" class="summary">
+    <h2>Total number of deployments: {{ mainnetData.deployments.numDeployments }}</h2>
+    <h2>Total number of Title Escrows created: {{ mainnetData.numCreated }}</h2>
+  
+    <div class="uniques">
+      <v-card  title="List of unique deployers" class="unique-deployers">
+        <v-virtual-scroll :height="300" :items= mainnetData.deployments.uniqueDeployer :item-height="5" :width="400" >
+          <template v-slot:default="{ item }">
+            {{ item }}
+          </template>
+        </v-virtual-scroll>
+      </v-card>
+      <v-card  title="List of Title Escrow Factories" class="unique-factory">
+        <h3>List of Title Escrow Factories</h3>
+        <v-virtual-scroll :height="300" :items= mainnetData.deployments.uniqueFactory :item-height="5" :width="400" >
           <template v-slot:default="{ item }">
             {{ item }}
           </template>
@@ -27,15 +51,20 @@
 
 
 <script>
+import { ref } from 'vue';
+
 export default{
+  name: 'HomeView',
+
+
   data() {
-    return{
-      data : null,
-    };
-  },
-  async created(){
-    console.log('created')
-    try{
+
+    const Sepolia = ref(false);
+    const Mainnet = ref(false);
+
+    const showSepolia = async () => {
+      Sepolia.value = true;
+      try{
       const response = await fetch ('./.netlify/functions/sepolia-listen_combine');
       if (!response.ok){
         throw new Error('Network response not ok');
@@ -43,14 +72,43 @@ export default{
       console.log(response);
       const result = await response.json();
       console.log(result);
-      this.data = result
+      this.sepoliaData = result
 
     
     } catch (error){
       console.log(error)
       this.error = error.toString();
     }
-  },
+    }
+
+    const showMainnet = async () => {
+      Mainnet.value = true;
+      try{
+      const response = await fetch ('./.netlify/functions/eth-listen_combine');
+      if (!response.ok){
+        throw new Error('Network response not ok');
+      }
+      console.log(response);
+      const result = await response.json();
+      console.log(result);
+      this.mainnetData = result
+
+    
+    } catch (error){
+      console.log(error)
+      this.error = error.toString();
+    }
+    }
+
+    return{
+      sepoliaData : null,
+      mainnetData : null,
+      showSepolia,
+      Sepolia,
+      Mainnet,
+      showMainnet,
+    };
+  }
 }
 
 </script>
