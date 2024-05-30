@@ -127,6 +127,6 @@ export default async (request,context) => {
         
     } catch(error){
         console.log(error);
-        return new Response(JSON.stringify({ error: 'Failed fetching data' }), { headers: { 'Content-Type': 'application/json' } });
+        return new Response(JSON.stringify({ error: 'Failed fetching data' }), { headers: { 'Content-Type': 'application/json',"Access-Control-Allow-Origin": "*" } });
       };
 }   

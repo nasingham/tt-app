@@ -118,7 +118,12 @@ export default{
       Eth.value = true;
       try{
       // const response = await fetch ('./.netlify/functions/eth-listen_combine');
-      const response = await fetch ('https://tradetrust-app.netlify.app/.netlify/functions/eth-listen_combine');
+      const response = await fetch('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_combine', {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json',
+          }
+      });
       if (!response.ok){
         throw new Error('Network response not ok');
       }

@@ -84,7 +84,14 @@ export default async(request,context) => {
             }); 
         }   catch(error){
             console.log(error);
-            return new Response(JSON.stringify({ error: 'Failed combining data' }), { headers: { 'Content-Type': 'application/json' } });
-            };
+            return new Response(JSON.stringify({ error: 'Failed combining data' }), {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                }
+            });
+        };
     }
 }
