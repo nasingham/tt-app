@@ -33,7 +33,7 @@
     <h2>Total number of Title Escrows created: {{ ethData.numCreated }}</h2>
     <p>Last updated: {{ ethTimestamp }}</p>
     <div class="uniques">
-      <v-card  title="List of unique deployers" class="unique-deployers">
+      <v-card  title="List of wallet addresses" class="unique-deployers">
         <v-virtual-scroll :height="300" :items= ethData.deployments.uniqueDeployer :item-height="5" :width="400" >
           <template v-slot:default="{ item }">
             {{ item }}
@@ -96,7 +96,8 @@ export default{
     const showSepolia = async () => {
       Sepolia.value = true;
       try{
-      const response = await fetch ('./.netlify/functions/sepolia-listen_combine');
+      // const response = await fetch ('./.netlify/functions/sepolia-listen_combine');
+      const response = await fetch ('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_combine');
       if (!response.ok){
         throw new Error('Network response not ok');
       }
@@ -116,7 +117,8 @@ export default{
     const showEth = async () => {
       Eth.value = true;
       try{
-      const response = await fetch ('./.netlify/functions/eth-listen_combine');
+      // const response = await fetch ('./.netlify/functions/eth-listen_combine');
+      const response = await fetch ('https://tradetrust-app.netlify.app/.netlify/functions/eth-listen_combine');
       if (!response.ok){
         throw new Error('Network response not ok');
       }
@@ -136,7 +138,8 @@ export default{
     const showStability = async () => {
       Stability.value = true;
       try{
-      const response = await fetch ('./.netlify/functions/stability-listen_combine');
+      // const response = await fetch ('./.netlify/functions/stability-listen_combine');
+      const response = await fetch ('https://tradetrust-app.netlify.app/.netlify/functions/stability-listen_combine');
       if (!response.ok){
         throw new Error('Network response not ok');
       }

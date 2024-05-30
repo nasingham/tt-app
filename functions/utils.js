@@ -4,6 +4,7 @@ export function processEventsDeployer(events) {
     const uniqueDeployer = new Set();
     const returnValues = [];
     const uniqueFactory = new Set();
+    const uniqueDeployed = new Set();
 
     events.forEach(event => {
         if (event.event === 'Deployment') {
@@ -18,6 +19,9 @@ export function processEventsDeployer(events) {
             if (!uniqueFactory.has(titleEscrowFactory)){
                 uniqueFactory.add(titleEscrowFactory);
             }
+            if (!uniqueDeployed.has(deployed)){
+                uniqueDeployed.add(deployed);
+            }
             
         }
     });
@@ -26,6 +30,7 @@ export function processEventsDeployer(events) {
         numDeployments,
         uniqueDeployer: Array.from(uniqueDeployer),
         uniqueFactory: Array.from(uniqueFactory),
+        uniqueDeployed: Array.from(uniqueDeployed),
         returnValues,
         
     };
