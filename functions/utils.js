@@ -56,13 +56,34 @@ export function processEventsTitleEscrow(events){
 }
 
 export  function combine(string_deployments, string_titleCreated){
-    console.log('Type of deployments:', typeof string_deployments);
-    console.log('Type of titleCreated:', typeof string_titleCreated);
-    const deployments = JSON.parse(string_deployments);
-    const titleCreated = JSON.parse(string_titleCreated);
-    console.log('Type of deployments:', typeof titleCreated);
-    console.log(titleCreated);
+    // console.log('Type of deployments:', typeof string_deployments);
+    // console.log('Type of titleCreated:', typeof string_titleCreated);
+    let deployments, titleCreated;
 
+    try {
+        deployments = JSON.parse(string_deployments);
+    } catch (error) {
+        console.error('Error parsing deployments:', error);
+        return { error: 'Invalid deployments data' };
+    }
+
+    try {
+        titleCreated = JSON.parse(string_titleCreated);
+    } catch (error) {
+        console.error('Error parsing titleCreated:', error);
+        return { error: 'Invalid titleCreated data' };
+    }
+
+    if (!deployments.returnValues || !Array.isArray(deployments.returnValues)) {
+        console.error('Invalid structure for deployments.returnValues');
+        return { error: 'Invalid structure for deployments' };
+    }
+
+    if (!titleCreated.returnValues || !Array.isArray(titleCreated.returnValues)) {
+        console.error('Invalid structure for titleCreated.returnValues');
+        return { error: 'Invalid structure for titleCreated' };
+    }
+    
         deployments.returnValues.forEach(deployment => {
             const deployed = deployment.deployed;
             deployment.deployed = [deployed, {'number of tokens':0},[]];

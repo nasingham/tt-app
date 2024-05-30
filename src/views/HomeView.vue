@@ -1,10 +1,15 @@
 <template>
-  <v-btn @click="showSepolia">Sepolia</v-btn>
-  <v-btn @click="showMainnet">Ethereum</v-btn>
-  <v-btn @click="showStability">Stability GTN</v-btn>
+<div>
+  <div class="buttons">
+    <v-btn @click="showSepolia">Sepolia</v-btn>
+    <v-btn @click="showEth">Ethereum</v-btn>
+    <v-btn @click="showStability">Stability GTN</v-btn>
+  </div>
   <div v-if="Sepolia" class="summary">
+    <!-- <SummaryComponent data = "sepoliaData"></SummaryComponent> -->
     <h2>Total number of deployments: {{ sepoliaData.deployments.numDeployments }}</h2>
     <h2>Total number of Title Escrows created: {{ sepoliaData.numCreated }}</h2>
+    <p>Last updated: {{ sepoliaTimestamp }}</p>
   
     <div class="uniques">
       <v-card  title="List of unique deployers" class="unique-deployers">
@@ -15,7 +20,6 @@
         </v-virtual-scroll>
       </v-card>
       <v-card  title="List of Title Escrow Factories" class="unique-factory">
-        <h3>List of Title Escrow Factories</h3>
         <v-virtual-scroll :height="300" :items= sepoliaData.deployments.uniqueFactory :item-height="5" :width="400" >
           <template v-slot:default="{ item }">
             {{ item }}
@@ -24,21 +28,20 @@
       </v-card>
     </div>
   </div>
-  <div v-if="Mainnet" class="summary">
-    <h2>Total number of deployments: {{ mainnetData.deployments.numDeployments }}</h2>
-    <h2>Total number of Title Escrows created: {{ mainnetData.numCreated }}</h2>
-  
+  <div v-if="Eth" class="summary">
+    <h2>Total number of deployments: {{ ethData.deployments.numDeployments }}</h2>
+    <h2>Total number of Title Escrows created: {{ ethData.numCreated }}</h2>
+    <p>Last updated: {{ ethTimestamp }}</p>
     <div class="uniques">
       <v-card  title="List of unique deployers" class="unique-deployers">
-        <v-virtual-scroll :height="300" :items= mainnetData.deployments.uniqueDeployer :item-height="5" :width="400" >
+        <v-virtual-scroll :height="300" :items= ethData.deployments.uniqueDeployer :item-height="5" :width="400" >
           <template v-slot:default="{ item }">
             {{ item }}
           </template>
         </v-virtual-scroll>
       </v-card>
       <v-card  title="List of Title Escrow Factories" class="unique-factory">
-        <h3>List of Title Escrow Factories</h3>
-        <v-virtual-scroll :height="300" :items= mainnetData.deployments.uniqueFactory :item-height="5" :width="400" >
+        <v-virtual-scroll :height="300" :items= ethData.deployments.uniqueFactory :item-height="5" :width="400" >
           <template v-slot:default="{ item }">
             {{ item }}
           </template>
@@ -49,7 +52,7 @@
   <div v-if="Stability" class="summary">
     <h2>Total number of deployments: {{ stabilityData.deployments.numDeployments }}</h2>
     <h2>Total number of Title Escrows created: {{ stabilityData.numCreated }}</h2>
-  
+    <p>Last updated: {{ stabilityTimestamp }}</p>
     <div class="uniques">
       <v-card  title="List of unique deployers" class="unique-deployers">
         <v-virtual-scroll :height="300" :items= stabilityData.deployments.uniqueDeployer :item-height="5" :width="400" >
@@ -59,7 +62,6 @@
         </v-virtual-scroll>
       </v-card>
       <v-card  title="List of Title Escrow Factories" class="unique-factory">
-        <h3>List of Title Escrow Factories</h3>
         <v-virtual-scroll :height="300" :items= stabilityData.deployments.uniqueFactory :item-height="5" :width="400" >
           <template v-slot:default="{ item }">
             {{ item }}
@@ -68,6 +70,7 @@
       </v-card>
     </div>
   </div>
+</div>
 </template>
 
 
@@ -75,15 +78,19 @@
 
 <script>
 import { ref } from 'vue';
+// import SummaryComponent from '../components/SummaryComponent.vue';
 
 export default{
   name: 'HomeView',
+  // components:{
+    // SummaryComponent
+  // },
 
 
   data() {
 
     const Sepolia = ref(false);
-    const Mainnet = ref(false);
+    const Eth = ref(false);
     const Stability = ref(false);
 
     const showSepolia = async () => {
@@ -96,7 +103,8 @@ export default{
       console.log(response);
       const result = await response.json();
       console.log(result);
-      this.sepoliaData = result
+      this.sepoliaData = result.data;
+      this.sepoliaTimestamp = (new Date(result.timestamp)).toLocaleString();
 
     
     } catch (error){
@@ -105,8 +113,8 @@ export default{
     }
     }
 
-    const showMainnet = async () => {
-      Mainnet.value = true;
+    const showEth = async () => {
+      Eth.value = true;
       try{
       const response = await fetch ('./.netlify/functions/eth-listen_combine');
       if (!response.ok){
@@ -115,7 +123,8 @@ export default{
       console.log(response);
       const result = await response.json();
       console.log(result);
-      this.mainnetData = result
+      this.ethData = result.data;
+      this.ethTimestamp = (new Date(result.timestamp)).toLocaleString();
 
     
     } catch (error){
@@ -134,7 +143,8 @@ export default{
       console.log(response);
       const result = await response.json();
       console.log(result);
-      this.stabilityData = result
+      this.stabilityData = result.data;
+      this.stabilityTimestamp = (new Date(result.timestamp)).toLocaleString();
 
     
     } catch (error){
@@ -145,14 +155,17 @@ export default{
 
     return{
       sepoliaData : null,
-      mainnetData : null,
+      ethData : null,
       stabilityData : null,
       showSepolia,
       Sepolia,
-      Mainnet,
+      Eth,
       Stability,
-      showMainnet,
+      showEth,
       showStability,
+      sepoliaTimestamp:null,
+      ethTimestamp : null,
+      stabilityTimestamp : null,
     };
   }
 }
@@ -162,10 +175,17 @@ export default{
 
 <style>
 .summary {
-  position: absolute;
-  top: 0;
-  left: 0;
   padding: 20px;
+}
+
+
+
+.buttons{
+  margin-top:10px;
+}
+
+.buttons button{
+  margin-right:5px;
 }
 
 .uniques{

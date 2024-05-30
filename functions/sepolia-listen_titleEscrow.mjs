@@ -96,12 +96,11 @@ const contractABI = [
 
 
 
-
 export default async (request,context) => {
 
     try{  
         await web3.eth.net.isListening();
-        console.log('listening');
+        console.log('title listening');
 
     
         const contract = new web3.eth.Contract(contractABI,titleEscrowFactory);
@@ -110,20 +109,20 @@ export default async (request,context) => {
             return typeof value === 'bigint' ? value.toString() : value;
         }
     
-    const events = await contract.getPastEvents('TitleEscrowCreated',{
-        fromBlock: 0,
-        toBlock: 'latest',
-    });
+        const events = await contract.getPastEvents('TitleEscrowCreated',{
+            fromBlock: 0,
+            toBlock: 'latest',
+        });
 
-    const processed = processEventsTitleEscrow(events);
-    const jsonString = JSON.stringify(processed, bigintReplacer, 2);
-    return new Response(jsonString, {
-        headers: { 'Content-Type': 'application/json',
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "GET, POST, OPTION",
-        }
-    })
+        const processed = processEventsTitleEscrow(events);
+        const response = JSON.stringify(processed,bigintReplacer,2);
+        return new Response(response, {
+            headers: { 'Content-Type': 'application/json',
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Methods": "GET, POST, OPTION",
+            }
+        })
         
     } catch(error){
         console.log(error);

@@ -2,6 +2,7 @@
 import Web3 from 'web3';
 import { processEventsDeployer } from './utils';
 
+
 const web3 = new Web3('https://eth-sepolia.g.alchemy.com/v2/oYTceCr2171uweAFpcDci_A-434gf1Qj');
 const deployer = "0x9eBC30E7506E6Ce36eAc5507FCF0121BaF7AeA57"
 //ABI of Deployer
@@ -118,9 +119,10 @@ const contractABI = [
 
 
 export default async (request,context) => {
+    
     try{  
         await web3.eth.net.isListening();
-        console.log('listening');
+        console.log('deployer listening');
 
     
         const contract = new web3.eth.Contract(contractABI,deployer);
@@ -129,20 +131,20 @@ export default async (request,context) => {
             return typeof value === 'bigint' ? value.toString() : value;
         }
     
-    const events = await contract.getPastEvents('Deployment',{
-        fromBlock: 0,
-        toBlock: 'latest',
-    });
+        const events = await contract.getPastEvents('Deployment',{
+            fromBlock: 0,
+            toBlock: 'latest',
+        });
 
-    const processed = processEventsDeployer(events);
-    const jsonString = JSON.stringify(processed, bigintReplacer, 2);
-    return new Response(jsonString, {
-        headers: { 'Content-Type': 'application/json',
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "Content-Type",
-        "Access-Control-Allow-Methods": "GET, POST, OPTION",
-        }
-    })
+        const processed = processEventsDeployer(events);
+        const response = JSON.stringify(processed, bigintReplacer,2);
+        return new Response(response, {
+            headers: { 'Content-Type': 'application/json',
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Methods": "GET, POST, OPTION",
+            }
+        })
         
     } catch(error){
         console.log(error);

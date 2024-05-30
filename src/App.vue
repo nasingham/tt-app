@@ -1,6 +1,8 @@
-<script setup>
+<script>
 // import { RouterLink, RouterView } from 'vue-router'
-
+export default {
+  name : 'App'
+}
 </script>
 
 <!-- <template>
@@ -14,7 +16,9 @@
   </header>
   <RouterView />
 </template> -->
+<template>
 
+</template>
 <style scoped>
 
 
@@ -44,4 +48,9 @@ nav a:first-of-type {
   border: 0;
 } */
 
+#app{
+  background-color: #b2beee;
+  min-height : 100vh;
+  margin: 0;
+}
 </style>
