@@ -1,4 +1,7 @@
   <template>
+    <div class="nav">
+      <Navbar/>
+    </div>
   <div class="home">
     <div>
       <v-card class="summary-box">
@@ -48,12 +51,15 @@
   import { ref, onMounted } from 'vue';
   import SummaryComponent from '../components/SummaryComponent.vue';
   import TokenRegistryComponent from '../components/TokenRegistryComponent.vue';
+  import Navbar from '@/components/Navbar.vue';
 
   export default{
     name: 'HomeView',
     components:{
       SummaryComponent,
       TokenRegistryComponent,
+      Navbar,
+ 
     },
 
 
