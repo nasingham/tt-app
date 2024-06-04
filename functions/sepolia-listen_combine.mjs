@@ -4,6 +4,7 @@ import { getStore } from '@netlify/blobs';
 export default async(request,context) => {
 
     const currentTime = new Date().getTime();
+    console.log(`Current time: ${currentTime}`);
 
     //Use this to force an update to Blob
     
@@ -11,19 +12,19 @@ export default async(request,context) => {
 
     const combinedStore = getStore("sepolia");
     
-    const storedData = await combinedStore.getWithMetadata("data",{type: "json"});
+    const storedData = await combinedStore.get("data",{type: "json"});
+    const storedTimestamp = await combinedStore.get("timestamp");
+    console.log(`Stored timestamp: ${storedTimestamp}`);
+    
     const CACHE_DURATION = 60*60*1000; //1 hour
 
-    if (storedData && currentTime-storedData.metadata.timestamp < CACHE_DURATION){
-        const prevTime = storedData.metadata.timestamp;
-        console.log("Taking data from Blob")
-        console.log(prevTime);
-        console.log(currentTime);
+    if (storedData && storedTimestamp && currentTime-storedTimestamp < CACHE_DURATION){
+        console.log("Taking data from Blob");
+        console.log(`Cache valid for another: ${((CACHE_DURATION - (currentTime - storedTimestamp)) / 1000 / 60).toFixed(2)} minutes`);
         const processed = {
-            data : storedData.data,
-            timestamp : prevTime,
+            data : storedData,
+            timestamp : storedTimestamp,
         };
-        console.log(processed.data);
         return new Response(JSON.stringify(processed,null,2), {
             headers: { 'Content-Type': 'application/json',
             "Access-Control-Allow-Origin": "*",
@@ -58,20 +59,18 @@ export default async(request,context) => {
             
             console.log('combining...')
             const combined = combine(input_deployments,input_titleCreated);
-            const timestamp = currentTime;
+            const newTimestamp = currentTime;
             
 
-            await combinedStore.setJSON("data",combined,{
-                metadata: {timestamp:timestamp},
-            });
-            await combinedStore.set("timestamp",timestamp);
+            await combinedStore.setJSON("data",combined);
+            await combinedStore.set("timestamp",newTimestamp);
             // console.log('processed data: '+ JSON.stringify(processed.data,null,2));
             console.log('data set to Blob');
 
 
             const processed = {
                 data : combined,
-                timestamp : timestamp
+                timestamp : newTimestamp
             };
             
             const jsonString = JSON.stringify(processed, bigintReplacer, 2);

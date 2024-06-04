@@ -72,9 +72,10 @@ export default{
         }
         console.log(response);
         const result = await response.json();
+        console.log(result);
         dataRef.value = result.data;
         timestampRef.value = new Date(result.timestamp).toLocaleString();
-        console.log(timestampRef.value);
+        console.log('fetch data time' + timestampRef.value);
       } catch (err) {
         console.log(err);
         error.value = err.toString();
@@ -88,7 +89,9 @@ export default{
             sepoliaData,
             sepoliaTimestamp
           );
-        };
+      console.log(sepoliaTimestamp);
+    };
+      
 
     const getEth = () => {
       console.log('fetching eth')
