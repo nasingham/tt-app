@@ -1,199 +1,150 @@
 <template>
-<div>
-  <div class="buttons">
-    <v-btn @click="showSepolia">Sepolia</v-btn>
-    <v-btn @click="showEth">Ethereum</v-btn>
-    <v-btn @click="showStability">Stability GTN</v-btn>
+  <div>
+    <v-card class="summary-box">
+      <v-tabs v-model="activeTab" bg-color="primary">
+        <v-tab value="sepolia" >Sepolia</v-tab>
+        <v-tab value="eth" >Ethereum</v-tab>
+        <v-tab value="gtn" >Stability GTN</v-tab>
+      </v-tabs>
+      <v-tabs-window v-model="activeTab">
+        <v-tabs-window-item value="sepolia">
+          <SummaryComponent
+            v-if="sepoliaData"
+            :data="sepoliaData"
+            :timestamp="sepoliaTimestamp"
+            scannerUrl="https://sepolia.etherscan.io/address/"
+            :refresh = "showSepolia"
+          />
+        </v-tabs-window-item>
+        <v-tabs-window-item value="eth">
+          <SummaryComponent
+            v-if="ethData"
+            :data="ethData"
+            :timestamp="ethTimestamp"
+            scannerUrl="https://etherscan.io/address/"
+            :refresh="showEth"
+          />
+        </v-tabs-window-item>
+        <v-tabs-window-item value="gtn">
+          <SummaryComponent
+            v-if="stabilityData"
+            :data="stabilityData"
+            :timestamp="stabilityTimestamp"
+            scannerUrl="https://stability.blockscout.com/address/"
+            :refresh="showStability"
+          />
+        </v-tabs-window-item>
+      </v-tabs-window>
+    </v-card>
   </div>
-  <div v-if="Sepolia" class="summary">
-    <!-- <SummaryComponent data = "sepoliaData"></SummaryComponent> -->
-    <h2>Total number of deployments: {{ sepoliaData.deployments.numDeployments }}</h2>
-    <h2>Total number of Title Escrows created: {{ sepoliaData.numCreated }}</h2>
-    <p>Last updated: {{ sepoliaTimestamp }}</p>
-  
-    <div class="uniques">
-      <v-card  title="List of unique deployers" class="unique-deployers">
-        <v-virtual-scroll :height="300" :items= sepoliaData.deployments.uniqueDeployer :item-height="5" :width="400" >
-          <template v-slot:default="{ item }">
-            {{ item }}
-          </template>
-        </v-virtual-scroll>
-      </v-card>
-      <v-card  title="List of Title Escrow Factories" class="unique-factory">
-        <v-virtual-scroll :height="300" :items= sepoliaData.deployments.uniqueFactory :item-height="5" :width="400" >
-          <template v-slot:default="{ item }">
-            {{ item }}
-          </template>
-        </v-virtual-scroll>
-      </v-card>
-    </div>
-  </div>
-  <div v-if="Eth" class="summary">
-    <h2>Total number of deployments: {{ ethData.deployments.numDeployments }}</h2>
-    <h2>Total number of Title Escrows created: {{ ethData.numCreated }}</h2>
-    <p>Last updated: {{ ethTimestamp }}</p>
-    <div class="uniques">
-      <v-card  title="List of wallet addresses" class="unique-deployers">
-        <v-virtual-scroll :height="300" :items= ethData.deployments.uniqueDeployer :item-height="5" :width="400" >
-          <template v-slot:default="{ item }">
-            {{ item }}
-          </template>
-        </v-virtual-scroll>
-      </v-card>
-      <v-card  title="List of Title Escrow Factories" class="unique-factory">
-        <v-virtual-scroll :height="300" :items= ethData.deployments.uniqueFactory :item-height="5" :width="400" >
-          <template v-slot:default="{ item }">
-            {{ item }}
-          </template>
-        </v-virtual-scroll>
-      </v-card>
-    </div>
-  </div>
-  <div v-if="Stability" class="summary">
-    <h2>Total number of deployments: {{ stabilityData.deployments.numDeployments }}</h2>
-    <h2>Total number of Title Escrows created: {{ stabilityData.numCreated }}</h2>
-    <p>Last updated: {{ stabilityTimestamp }}</p>
-    <div class="uniques">
-      <v-card  title="List of unique deployers" class="unique-deployers">
-        <v-virtual-scroll :height="300" :items= stabilityData.deployments.uniqueDeployer :item-height="5" :width="400" >
-          <template v-slot:default="{ item }">
-            {{ item }}
-          </template>
-        </v-virtual-scroll>
-      </v-card>
-      <v-card  title="List of Title Escrow Factories" class="unique-factory">
-        <v-virtual-scroll :height="300" :items= stabilityData.deployments.uniqueFactory :item-height="5" :width="400" >
-          <template v-slot:default="{ item }">
-            {{ item }}
-          </template>
-        </v-virtual-scroll>
-      </v-card>
-    </div>
-  </div>
-</div>
 </template>
 
 
 
 
 <script>
-import { ref } from 'vue';
-// import SummaryComponent from '../components/SummaryComponent.vue';
+import { ref, onMounted } from 'vue';
+import SummaryComponent from '../components/SummaryComponent.vue';
 
 export default{
   name: 'HomeView',
-  // components:{
-    // SummaryComponent
-  // },
+  components:{
+    SummaryComponent
+  },
 
 
   data() {
 
-    const Sepolia = ref(false);
-    const Eth = ref(false);
-    const Stability = ref(false);
+    const activeTab = ref(0);
+    const sepoliaData = ref(null);
+    const ethData = ref(null);
+    const stabilityData = ref(null);
+    const sepoliaTimestamp = ref(null);
+    const ethTimestamp = ref(null);
+    const stabilityTimestamp = ref(null);
+    const error = ref(null);
 
-    const showSepolia = async () => {
-      Sepolia.value = true;
-      try{
-      // const response = await fetch ('./.netlify/functions/sepolia-listen_combine');
-      const response = await fetch ('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_combine');
-      if (!response.ok){
-        throw new Error('Network response not ok');
+    const fetchData = async (url, dataRef, timestampRef) => {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error('Network response not ok');
+        }
+        console.log(response);
+        const result = await response.json();
+        dataRef.value = result.data;
+        timestampRef.value = new Date(result.timestamp).toLocaleString();
+        console.log(timestampRef.value);
+      } catch (err) {
+        console.log(err);
+        error.value = err.toString();
       }
-      console.log(response);
-      const result = await response.json();
-      console.log(result);
-      this.sepoliaData = result.data;
-      this.sepoliaTimestamp = (new Date(result.timestamp)).toLocaleString();
+    };
 
-    
-    } catch (error){
-      console.log(error)
-      this.error = error.toString();
-    }
-    }
+    const showSepolia = () => {
+        fetchData(
+            'https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_combine',
+            sepoliaData,
+            sepoliaTimestamp
+          );
+        };
 
-    const showEth = async () => {
-      Eth.value = true;
-      try{
-      // const response = await fetch ('./.netlify/functions/eth-listen_combine');
-      const response = await fetch('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_combine', {
-          method: 'GET',
-          headers: {
-              'Content-Type': 'application/json',
-          }
-      });
-      if (!response.ok){
-        throw new Error('Network response not ok');
-      }
-      console.log(response);
-      const result = await response.json();
-      console.log(result);
-      this.ethData = result.data;
-      this.ethTimestamp = (new Date(result.timestamp)).toLocaleString();
+    const showEth = () => {
+        fetchData(
+          'https://tradetrust-app.netlify.app/.netlify/functions/eth-listen_combine',
+          ethData,
+          ethTimestamp
+        );
+    };
 
-    
-    } catch (error){
-      console.log(error)
-      this.error = error.toString();
-    }
-    }
+    const showStability = () => {
+        fetchData(
+          'https://tradetrust-app.netlify.app/.netlify/functions/stability-listen_combine',
+          stabilityData,
+          stabilityTimestamp
+        );
+      };
 
-    const showStability = async () => {
-      Stability.value = true;
-      try{
-      // const response = await fetch ('./.netlify/functions/stability-listen_combine');
-      const response = await fetch ('https://tradetrust-app.netlify.app/.netlify/functions/stability-listen_combine');
-      if (!response.ok){
-        throw new Error('Network response not ok');
-      }
-      console.log(response);
-      const result = await response.json();
-      console.log(result);
-      this.stabilityData = result.data;
-      this.stabilityTimestamp = (new Date(result.timestamp)).toLocaleString();
 
-    
-    } catch (error){
-      console.log(error)
-      this.error = error.toString();
-    }
-    }
+    onMounted(() => {
+      showSepolia(); // Load the default tab's data
+      showStability();
+      showEth();
+    });
+
 
     return{
-      sepoliaData : null,
-      ethData : null,
-      stabilityData : null,
+      activeTab,
       showSepolia,
-      Sepolia,
-      Eth,
-      Stability,
       showEth,
       showStability,
-      sepoliaTimestamp:null,
-      ethTimestamp : null,
-      stabilityTimestamp : null,
+      sepoliaData,
+      ethData,
+      stabilityData,
+      sepoliaTimestamp,
+      ethTimestamp,
+      stabilityTimestamp,
     };
-  }
-}
+  },
+
+  
+} 
 
 </script>
 
 
 <style>
+
+.summary-box {
+  border: 1px solid black;
+  padding: 20px;
+  margin: 20px;
+  height: 600px;
+  width: 1320px;
+}
+
 .summary {
   padding: 20px;
-}
-
-
-
-.buttons{
-  margin-top:10px;
-}
-
-.buttons button{
-  margin-right:5px;
 }
 
 .uniques{
@@ -202,13 +153,15 @@ export default{
   padding:10px;
 }
 .unique-deployers,
-.unique-factory {
+.unique-factory,
+.unique-registries {
   margin-right: 20px;
   align-items: center;
 }
 
 .unique-deployers h3,
-.unique-factory h3 {
+.unique-factory h3,
+.unique-registries h3 {
   margin-bottom: 5px;
 }
 
