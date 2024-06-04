@@ -13,7 +13,7 @@
             :data="sepoliaData"
             :timestamp="sepoliaTimestamp"
             scannerUrl="https://sepolia.etherscan.io/address/"
-            :refresh = "showSepolia"
+            :refresh = "getSepolia"
           />
         </v-tabs-window-item>
         <v-tabs-window-item value="eth">
@@ -22,7 +22,7 @@
             :data="ethData"
             :timestamp="ethTimestamp"
             scannerUrl="https://etherscan.io/address/"
-            :refresh="showEth"
+            :refresh="getEth"
           />
         </v-tabs-window-item>
         <v-tabs-window-item value="gtn">
@@ -31,7 +31,7 @@
             :data="stabilityData"
             :timestamp="stabilityTimestamp"
             scannerUrl="https://stability.blockscout.com/address/"
-            :refresh="showStability"
+            :refresh="getStability"
           />
         </v-tabs-window-item>
       </v-tabs-window>
@@ -81,7 +81,8 @@ export default{
       }
     };
 
-    const showSepolia = () => {
+    const getSepolia = () => {
+      console.log('fetching sepolia')
         fetchData(
             'https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_combine',
             sepoliaData,
@@ -89,7 +90,8 @@ export default{
           );
         };
 
-    const showEth = () => {
+    const getEth = () => {
+      console.log('fetching eth')
         fetchData(
           'https://tradetrust-app.netlify.app/.netlify/functions/eth-listen_combine',
           ethData,
@@ -97,7 +99,8 @@ export default{
         );
     };
 
-    const showStability = () => {
+    const getStability = () => {
+      console.log('fetching stability')
         fetchData(
           'https://tradetrust-app.netlify.app/.netlify/functions/stability-listen_combine',
           stabilityData,
@@ -107,17 +110,17 @@ export default{
 
 
     onMounted(() => {
-      showSepolia(); // Load the default tab's data
-      showStability();
-      showEth();
+      getSepolia(); // Load the default tab's data
+      getStability();
+      getEth();
     });
 
 
     return{
       activeTab,
-      showSepolia,
-      showEth,
-      showStability,
+      getSepolia,
+      getEth,
+      getStability,
       sepoliaData,
       ethData,
       stabilityData,
