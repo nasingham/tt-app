@@ -6,6 +6,7 @@
               :timestamp="sepoliaTimestamp"
               scannerUrl="https://sepolia.etherscan.io/address/"
               :refresh = "getSepolia"
+              class="summary"
             />
 
     </div>
@@ -72,6 +73,12 @@ import { ref, onMounted } from 'vue';
   
   <style scoped>
   /* Add your styles here if needed */
+  .summary{
+    position: absolute;
+    top:0;
+    left:0;
+    margin-left:50px;
+  }
   
   </style>
   

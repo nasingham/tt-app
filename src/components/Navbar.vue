@@ -1,10 +1,11 @@
 <template>
-  <div class="nav">
+  <div class="nav" style="z-index:1000">
     <v-card>
       <v-layout>
         <v-navigation-drawer
           expand-on-hover
           rail 
+          color="light-blue-darken-4"
         >
           <v-list>
               <v-list-item
@@ -53,5 +54,7 @@ export default{
 </script>
 
 <style scoped>
-
+.nav{
+  fill:aquamarine;
+}
 </style>

@@ -176,11 +176,13 @@
 
 
   <style scoped>
-
   .summary-box {
     border: 1px solid black;
+    position: absolute;
+    top:0;
+    left:0;
+    margin-left:100px;
     padding: 20px;
-    margin: 20px;
     height: 600px;
     width: 1320px;
   }

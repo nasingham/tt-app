@@ -6,6 +6,7 @@
               :timestamp="ethTimestamp"
               scannerUrl="https://etherscan.io/address/"
               :refresh = "getEth"
+              class="summary"
             />
 
     </div>
@@ -72,6 +73,11 @@ import { ref, onMounted } from 'vue';
   
   <style scoped>
   /* Add your styles here if needed */
-  
+  .summary{
+    position: absolute;
+    top:0;
+    left:0;
+    margin-left:50px;
+  }
   </style>
   

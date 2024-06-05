@@ -1,13 +1,26 @@
 <template>
   <div class="summary">
     <div class="header">
-      <h2>Total number of deployments: {{ data.deployments.numDeployments }}</h2>
+      <div class="big-cards">
+        <v-card
+        :title="titleDeployments"
+        variant="tonal"
+        elevation="3"
+        color="light-blue-darken-3">
+        </v-card>
+        <v-card
+        :title="titleCreated"
+        variant="tonal"
+        elevation="3">
+        </v-card>
+      </div>
+
+
       <div class="update">
         <p>Last updated: {{ timestamp }}</p> 
         <v-icon class="refresh-icon" @click="refreshData">mdi-refresh</v-icon>
       </div>
     </div>
-    <h2>Total number of Title Escrows created: {{ data.numCreated }}</h2>
     <div class="uniques">
       <v-card title="List of Wallet Addresses" class="unique-deployers">
         <v-virtual-scroll
@@ -58,6 +71,15 @@ export default {
     scannerUrl:String,
     refresh:Function,
   },
+  data(){
+    const titleDeployments = "Deployments: " + this.data.deployments.numDeployments;
+    const titleCreated = "Title Escrows Created: " + this.data.numCreated
+
+    return {
+      titleDeployments,
+      titleCreated,
+    }
+  },
   methods:{
     refreshData() {
       this.refresh();
@@ -75,6 +97,11 @@ export default {
   justify-content: space-between;
   align-items: center;
 }
+.big-cards{
+  display:flex;
+  column-gap:10px;
+  padding:10px;
+}
 .update{
   display:flex;
 }
@@ -88,12 +115,12 @@ export default {
 .uniques {
   margin-top: 10px;
   display: flex;
+  column-gap:20px;
   padding: 10px;
 }
 .unique-deployers,
 .unique-factory,
 .unique-registries {
-  margin-right: 20px;
   align-items: center;
 }
 
