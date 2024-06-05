@@ -1,9 +1,5 @@
   <template>
-    <div class="nav">
-      <Navbar/>
-    </div>
-  <div class="home">
-    <div>
+    <div class="home">
       <v-card class="summary-box">
         <v-tabs v-model="activeTab" bg-color="primary">
           <v-tab value="sepolia" >Sepolia</v-tab>
@@ -39,8 +35,17 @@
             />
           </v-tabs-window-item>
         </v-tabs-window>
+
+        <v-sheet max-width="600">
+          <v-slide-group show-arrows>
+            <v-slide-group-item>
+              <h2>test</h2>
+            </v-slide-group-item>
+
+          </v-slide-group>
+
+        </v-sheet>
       </v-card>
-    </div>
   </div>
   </template>
 
@@ -52,6 +57,8 @@
   import SummaryComponent from '../components/SummaryComponent.vue';
   import TokenRegistryComponent from '../components/TokenRegistryComponent.vue';
   import Navbar from '@/components/Navbar.vue';
+
+  
 
   export default{
     name: 'HomeView',
@@ -168,7 +175,7 @@
   </script>
 
 
-  <style>
+  <style scoped>
 
   .summary-box {
     border: 1px solid black;

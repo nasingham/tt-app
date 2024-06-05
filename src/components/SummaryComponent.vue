@@ -9,7 +9,7 @@
     </div>
     <h2>Total number of Title Escrows created: {{ data.numCreated }}</h2>
     <div class="uniques">
-      <v-card title="List of unique deployers" class="unique-deployers">
+      <v-card title="List of Wallet Addresses" class="unique-deployers">
         <v-virtual-scroll
           :height="300"
           :items="data.deployments.uniqueDeployer"
