@@ -1,26 +1,45 @@
 <template>
     <div class="stability">
-        <SummaryComponent
-              v-if="stabilityData"
-              :data="stabilityData"
-              :timestamp="stabilityTimestamp"
-              scannerUrl="https://stability.blockscout.com/address/"
-              :refresh = "getStability"
-              class="summary"
+        <div>
+            <SummaryComponent
+                v-if="stabilityData"
+                :data="stabilityData"
+                :timestamp="stabilityTimestamp"
+                scannerUrl="https://stability.blockscout.com/address/"
+                :refresh = "getStability"
+                class="summary"
             />
-
+        </div>
+        <div v-if="stabilityData" class="tokenRegistry">
+            <v-sheet max-width="1300">
+                <v-slide-group
+                class="vsg-1"
+                show-arrows>
+                    <v-slide-group-item>
+                        <TokenRegistryComponent 
+                            v-for="(registry, index) in stabilityData.deployments.returnValues"
+                            :key="index"
+                            :registry="registry"
+                            scannerUrl="https://stability.blockscout.com/address/"
+                        />
+                    </v-slide-group-item>
+                </v-slide-group>
+            </v-sheet>
+        </div>
     </div>
 </template>
   
   <script>
 import SummaryComponent from '@/components/SummaryComponent.vue';
 import { ref, onMounted } from 'vue';
+import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
   
   export default {
 
     name: 'StabilityView',
     components: {
         SummaryComponent,
+        TokenRegistryComponent,
     },
     data(){
         const stabilityData = ref(null);
@@ -73,12 +92,15 @@ import { ref, onMounted } from 'vue';
   
   <style scoped>
   /* Add your styles here if needed */
-  .summary{
-    position: absolute;
-    top:0;
-    left:0;
-    margin-left:50px;
-  }
+.stability {
+    display: flex;
+    flex-direction: column;
+    padding: 20px; /* Optional: Add padding for better spacing */
+}
+.summary {
+  margin-bottom: 20px; /* Add some margin to create space between summary and tokenRegistry */
+}
+
   
   </style>
   

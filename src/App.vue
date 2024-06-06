@@ -21,6 +21,11 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style>
+html, body {
+  margin: 0;
+}
+#app{
+  background-color: #F7F8FC;
+}
 </style>

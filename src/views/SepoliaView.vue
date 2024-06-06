@@ -1,6 +1,7 @@
 <template>
-    <div class="sepolia">
-        <SummaryComponent
+    <div class="sepolia d-flex flex-column">
+        <div>
+            <SummaryComponent
               v-if="sepoliaData"
               :data="sepoliaData"
               :timestamp="sepoliaTimestamp"
@@ -8,12 +9,29 @@
               :refresh = "getSepolia"
               class="summary"
             />
-
+        </div>
+        <div v-if="sepoliaData" class="tokenRegistry">
+            <v-sheet max-width="1000">
+                <v-slide-group
+                class="vsg-1"
+                show-arrows>
+                    <v-slide-group-item>
+                        <TokenRegistryComponent 
+                            v-for="(registry, index) in sepoliaData.deployments.returnValues"
+                            :key="index"
+                            :registry="registry"
+                            scannerUrl="https://sepolia.etherscan.io/address/"
+                        />
+                    </v-slide-group-item>
+                </v-slide-group>
+            </v-sheet>
+        </div>
     </div>
 </template>
   
   <script>
 import SummaryComponent from '@/components/SummaryComponent.vue';
+import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
 import { ref, onMounted } from 'vue';
   
   export default {
@@ -21,6 +39,7 @@ import { ref, onMounted } from 'vue';
     name: 'SepoliaView',
     components: {
         SummaryComponent,
+        TokenRegistryComponent,
     },
     data(){
         const sepoliaData = ref(null);
@@ -73,12 +92,15 @@ import { ref, onMounted } from 'vue';
   
   <style scoped>
   /* Add your styles here if needed */
-  .summary{
-    position: absolute;
-    top:0;
-    left:0;
-    margin-left:50px;
-  }
+.sepolia {
+  display: flex;
+  flex-direction: column;
+  padding: 20px; /* Optional: Add padding for better spacing */
+}
+.summary {
+  margin-bottom: 20px; /* Add some margin to create space between summary and tokenRegistry */
+}
+
   
   </style>
   

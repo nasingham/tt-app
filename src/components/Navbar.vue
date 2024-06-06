@@ -5,7 +5,7 @@
         <v-navigation-drawer
           expand-on-hover
           rail 
-          color="light-blue-darken-4"
+          color='#2D5FAA'
         >
           <v-list>
               <v-list-item
@@ -29,7 +29,7 @@
 
           <v-divider></v-divider>
           <v-list density="compact" nav>
-            <v-list-item class="icon" prepend-icon="mdi-webhook" title="Network Graph" value="network" @click="handleNavigation('network')"></v-list-item>
+            <v-list-item class="icon" prepend-icon="mdi-webhook" title="Network Graph" value="network" ></v-list-item>
           </v-list>
 
 

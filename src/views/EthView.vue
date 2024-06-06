@@ -1,13 +1,31 @@
 <template>
     <div class="eth">
-        <SummaryComponent
-              v-if="ethData"
-              :data="ethData"
-              :timestamp="ethTimestamp"
-              scannerUrl="https://etherscan.io/address/"
-              :refresh = "getEth"
-              class="summary"
+        <div>
+            <SummaryComponent
+                v-if="ethData"
+                :data="ethData"
+                :timestamp="ethTimestamp"
+                scannerUrl="https://etherscan.io/address/"
+                :refresh = "getEth"
+                class="summary"
             />
+        </div>
+        <div v-if="ethData" class="tokenRegistry">
+            <v-sheet max-width="1300">
+                <v-slide-group
+                class="vsg-1"
+                show-arrows>
+                    <v-slide-group-item>
+                        <TokenRegistryComponent 
+                            v-for="(registry, index) in ethData.deployments.returnValues"
+                            :key="index"
+                            :registry="registry"
+                            scannerUrl="https://etherscan.io/address/"
+                        />
+                    </v-slide-group-item>
+                </v-slide-group>
+            </v-sheet>
+        </div>
 
     </div>
 </template>
@@ -15,12 +33,14 @@
   <script>
 import SummaryComponent from '@/components/SummaryComponent.vue';
 import { ref, onMounted } from 'vue';
+import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
   
   export default {
 
     name: 'EthView',
     components: {
         SummaryComponent,
+        TokenRegistryComponent,
     },
     data(){
         const ethData = ref(null);
@@ -73,11 +93,14 @@ import { ref, onMounted } from 'vue';
   
   <style scoped>
   /* Add your styles here if needed */
-  .summary{
-    position: absolute;
-    top:0;
-    left:0;
-    margin-left:50px;
-  }
+.eth {  
+    display: flex;
+    flex-direction: column;
+    padding: 20px; /* Optional: Add padding for better spacing */
+}
+.summary {
+  margin-bottom: 20px; /* Add some margin to create space between summary and tokenRegistry */
+}
+
   </style>
   

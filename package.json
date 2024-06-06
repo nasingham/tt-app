@@ -12,6 +12,7 @@
     "@netlify/blobs": "^7.3.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
+    "vue3-jazzicon": "^0.1.4",
     "vuetify": "^3.6.7"
   },
   "devDependencies": {

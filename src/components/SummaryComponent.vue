@@ -6,12 +6,13 @@
         :title="titleDeployments"
         variant="tonal"
         elevation="3"
-        color="light-blue-darken-3">
-        </v-card>
+        :style="{ backgroundColor: '#4da6e8' , color: 'black'}"
+        />
         <v-card
         :title="titleCreated"
         variant="tonal"
-        elevation="3">
+        elevation="3"
+        :style="{ backgroundColor: '#4da6e8' , color: 'black'}">
         </v-card>
       </div>
 
@@ -21,37 +22,45 @@
         <v-icon class="refresh-icon" @click="refreshData">mdi-refresh</v-icon>
       </div>
     </div>
+
+
     <div class="uniques">
-      <v-card title="List of Wallet Addresses" class="unique-deployers">
+      <v-card  class="unique-deployers">
+        <v-card-title :style="{ backgroundColor: '#4da6e8' }">Wallet Addresses</v-card-title>
         <v-virtual-scroll
+          class="scroller"
           :height="300"
           :items="data.deployments.uniqueDeployer"
           :item-height="5"
-          :width="400"
+          :width="300"
         >
           <template v-slot:default="{ item }">
             <a :href="scannerUrl + item" target="_blank">{{ item }}</a>
           </template>
         </v-virtual-scroll>
       </v-card>
-      <v-card title="List of Title Escrow Factories" class="unique-factory">
+      <v-card  class="unique-factory">
+        <v-card-title :style="{ backgroundColor: '#4da6e8' }">Title Escrow Factories</v-card-title>
         <v-virtual-scroll
+          class="scroller"
           :height="300"
           :items="data.deployments.uniqueFactory"
           :item-height="5"
-          :width="400"
+          :width="300"
         >
           <template v-slot:default="{ item }">
             <a :href="scannerUrl + item" target="_blank">{{ item }}</a>
           </template>
         </v-virtual-scroll>
       </v-card>
-      <v-card title="List of Token Registries" class="unique-registries" v-if="data.deployments.uniqueDeployed">
+      <v-card  class="unique-registries" v-if="data.deployments.uniqueDeployed">
+        <v-card-title :style="{ backgroundColor: '#4da6e8' }">Token Registries</v-card-title>
         <v-virtual-scroll
+          class="scroller"
           :height="300"
           :items="data.deployments.uniqueDeployed"
           :item-height="5"
-          :width="400"
+          :width="300"
         >
           <template v-slot:default="{ item }">
             <a :href="scannerUrl + item" target="_blank">{{ item }}</a>
@@ -129,4 +138,9 @@ export default {
 .unique-registries a{
   color:blue;
 }
+.scroller{
+  padding:10px;
+}
+
+
 </style>
