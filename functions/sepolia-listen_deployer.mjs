@@ -135,7 +135,7 @@ export default async (request,context) => {
             fromBlock: 0,
             toBlock: 'latest',
         });
-
+        
         const processed = processEventsDeployer(events);
         const response = JSON.stringify(processed, bigintReplacer,2);
         return new Response(response, {

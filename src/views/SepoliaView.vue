@@ -76,6 +76,7 @@ import { ref, onMounted } from 'vue';
 
         onMounted(()=>{
             getSepolia();
+            console.log({output:sepoliaData});
         })
 
         return{
