@@ -37,10 +37,10 @@ export default async(request,context) => {
         try{
             console.log("fetching data from blockchain...")
             const [fetch_deployments, fetch_titleCreated] = await Promise.all([
-                fetch('http://localhost:9999/.netlify/functions/sepolia-listen_deployer'),
-                fetch('http://localhost:9999/.netlify/functions/sepolia-listen_titleEscrow')
-                // fetch ('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_deployer'),
-                // fetch ('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_titleEscrow')
+                // fetch('http://localhost:9999/.netlify/functions/sepolia-listen_deployer'),
+                // fetch('http://localhost:9999/.netlify/functions/sepolia-listen_titleEscrow')
+                fetch ('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_deployer'),
+                fetch ('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_titleEscrow')
             ]);
             if (!fetch_deployments.ok || !fetch_titleCreated.ok){
                 throw new Error ("Error fetching in combine");
