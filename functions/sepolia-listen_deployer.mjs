@@ -136,7 +136,9 @@ export default async (request,context) => {
             toBlock: 'latest',
         });
         
-        const processed = processEventsDeployer(events);
+        const processed =  processEventsDeployer(events);
+
+        console.log({process:processed});
         const response = JSON.stringify(processed, bigintReplacer,2);
         return new Response(response, {
             headers: { 'Content-Type': 'application/json',
@@ -148,6 +150,6 @@ export default async (request,context) => {
         
     } catch(error){
         console.log(error);
-        return new Response(JSON.stringify({ error: 'Failed fetching data' }), { headers: { 'Content-Type': 'application/json',"Access-Control-Allow-Origin": "*" } });
+        return new Response(JSON.stringify({ error: 'Failed deployer fetching data' }), { headers: { 'Content-Type': 'application/json',"Access-Control-Allow-Origin": "*" } });
       };
 }   

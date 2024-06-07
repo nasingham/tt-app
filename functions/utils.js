@@ -1,6 +1,15 @@
 // utils.js
-import Web3 from 'web3';
-const web3 = new Web3('https://eth-sepolia.g.alchemy.com/v2/oYTceCr2171uweAFpcDci_A-434gf1Qj');
+// import Web3 from 'web3';
+// const web3 = new Web3('https://eth-sepolia.g.alchemy.com/v2/oYTceCr2171uweAFpcDci_A-434gf1Qj');
+
+export async function getTime(blockNumber,web3){
+    let block = await web3.eth.getBlock(blockNumber);
+    const timestamp = block.timestamp;
+
+    return{
+        timestamp
+    }
+}
 
 export function processEventsDeployer(events) {
     let numDeployments = 0;
@@ -12,34 +21,28 @@ export function processEventsDeployer(events) {
     let implementation;
     const uniqueImplementation = new Set();
     let txnHash;
-    let timestamp;
 
-    events.forEach(event => {
+    for (const event of events) {
         if (event.event === 'Deployment') {
             numDeployments++;
             deploymentBlockNumber = event.blockNumber;
-            timestamp = web3.eth.getBlock(deploymentBlockNumber).timestamp;
+            // let deployTimestampObject = await getTime(deploymentBlockNumber,web3);
+            // deployTimestamp = deployTimestampObject.timestamp;
             txnHash = event.transactionHash;
             implementation = event.returnValues.implementation;
             const deployer = event.returnValues.deployer;
             const deployed = event.returnValues.deployed;
             const titleEscrowFactory = event.returnValues.titleEscrowFactory;
-            returnValues.push({ txnHash, deploymentBlockNumber, timestamp, deployer, titleEscrowFactory, deployed  });
-            if (!uniqueDeployer.has(deployer)){
-                uniqueDeployer.add(deployer);
-            }
-            if (!uniqueFactory.has(titleEscrowFactory)){
-                uniqueFactory.add(titleEscrowFactory);
-            }
-            if (!uniqueDeployed.has(deployed)){
-                uniqueDeployed.add(deployed);
-            }
-            if (!uniqueImplementation.has(implementation)){
-                uniqueImplementation.add(implementation);
-            }
+            returnValues.push({ txnHash, deploymentBlockNumber, deployer, titleEscrowFactory, deployed  });
+            
+            uniqueDeployer.add(deployer);
+            uniqueFactory.add(titleEscrowFactory);
+            uniqueDeployed.add(deployed);
+            uniqueImplementation.add(implementation);
+            
             
         }
-    });
+    };
 
     return {
         numDeployments,
@@ -53,27 +56,29 @@ export function processEventsDeployer(events) {
 }
 
 export function processEventsTitleEscrow(events){
-    let numCreated = 0;
+    console.log('processing title escrow');
+    let numCreated=0;
     const uniqueTokenRegistry = new Set();
     const returnValues = [];
     let titleBlockNumber;
-    let timestamp;
+    // let titleTimestamp;
     let txnHash;
 
-    events.forEach(event => {
+    for (const event of events) {
         if (event.event === 'TitleEscrowCreated'){
             numCreated++;
             titleBlockNumber = event.blockNumber;
-            timestamp = web3.eth.getBlock(titleBlockNumber).timestamp;
+            // let titleTimestampObject = await getTime(titleBlockNumber,web3);
+            // titleTimestamp = titleTimestampObject.timestamp;
             txnHash = event.transactionHash;
             const tokenRegistry = event.returnValues.tokenRegistry
             const tokenId = event.returnValues.tokenId;
             const titleEscrow = event.returnValues.titleEscrow;
-            returnValues.push({txnHash,blockNumber, timestamp, tokenRegistry, tokenId, titleEscrow });
+            returnValues.push({txnHash,titleBlockNumber, tokenRegistry, tokenId, titleEscrow });
 
             uniqueTokenRegistry.add(tokenRegistry);
         }
-    });
+    };
 
     return {
         numCreated,
@@ -83,7 +88,7 @@ export function processEventsTitleEscrow(events){
 
 export  function combine(string_deployments, string_titleCreated){
     // console.log('Type of deployments:', typeof string_deployments);
-    // console.log('Type of titleCreated:', typeof string_titleCreated);
+    console.log('Type of titleCreated:', typeof string_titleCreated);
     let deployments, titleCreated;
 
     try {
@@ -99,7 +104,7 @@ export  function combine(string_deployments, string_titleCreated){
         console.error('Error parsing titleCreated:', error);
         return { error: 'Invalid titleCreated data' };
     }
-
+    console.log(deployments.returnValues);
     if (!deployments.returnValues || !Array.isArray(deployments.returnValues)) {
         console.error('Invalid structure for deployments.returnValues');
         return { error: 'Invalid structure for deployments' };
@@ -112,7 +117,7 @@ export  function combine(string_deployments, string_titleCreated){
     
         deployments.returnValues.forEach(deployment => {
             const deployed = deployment.deployed;
-            const contents = new Set();
+            const contents = new Array();
             // deployment.deployed = [deployed, {'number of tokens':0},[]];
             
             
@@ -122,17 +127,18 @@ export  function combine(string_deployments, string_titleCreated){
                 const tokenReg = creation.tokenRegistry;
                 const tokenId = creation.tokenId;
                 const titleEscrow = creation.titleEscrow;
-                const blockNumber = creation.blockNumber;
-                const timestamp = creation.timestamp;
-                const content = {txnHash,tokenId,titleEscrow,blockNumber,timestamp};
+                const blockNumber = creation.titleBlockNumber;
+                // const timestamp = creation.titleTimestamp;
+                // const content = {txnHash,tokenId,titleEscrow,blockNumber,timestamp};
+                const content = {txnHash,tokenId,titleEscrow,blockNumber};
                 if (deployed === tokenReg){
                     contents.push(content);
                 }
                 
             })
             const num_tokens = contents.size;
-            const deployment_info = {deployed,num_tokens,contents}
-            deployments.deployed = deployment_info;
+            const deployed_info = {deployed,num_tokens,contents}
+            deployment.deployed = deployed_info;
             
         });
         deployments.numCreated = titleCreated.numCreated;
