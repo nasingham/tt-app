@@ -82,7 +82,7 @@ export default {
   },
   data(){
     const titleDeployments = "Deployments: " + this.data.deployments.numDeployments;
-    const titleCreated = "Title Escrows Created: " + this.data.numCreated
+    const titleCreated = "Title Escrows Created: " + this.data.deployments.numCreated;
 
     return {
       titleDeployments,

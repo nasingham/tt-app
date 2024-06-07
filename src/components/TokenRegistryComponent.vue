@@ -1,12 +1,12 @@
 <template>
     <div class="tokenregistry">
-        <v-card :title="registry.deployed[0]" :subtitle="registry.titleEscrowFactory" >
+        <v-card :title="registry.deployed.deployed" :subtitle="registry.titleEscrowFactory" >
             <v-divider></v-divider>
             <div class="content">
                 
                 <v-virtual-scroll
                     :height="200"
-                    :items="registry.deployed[2]"
+                    :items="registry.deployed.contents"
                     :item-height="8"
                     :width="200"
                     >
