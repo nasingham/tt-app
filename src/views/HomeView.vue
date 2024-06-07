@@ -1,51 +1,12 @@
   <template>
     <div class="home">
-      <v-card class="summary-box">
-        <v-tabs v-model="activeTab" bg-color="primary">
-          <v-tab value="sepolia" >Sepolia</v-tab>
-          <v-tab value="eth" >Ethereum</v-tab>
-          <v-tab value="gtn" >Stability GTN</v-tab>
-        </v-tabs>
-        <v-tabs-window v-model="activeTab">
-          <v-tabs-window-item value="sepolia">
-            <SummaryComponent
-              v-if="sepoliaData"
-              :data="sepoliaData"
-              :timestamp="sepoliaTimestamp"
-              scannerUrl="https://sepolia.etherscan.io/address/"
-              :refresh = "getSepolia"
-            />
-          </v-tabs-window-item>
-          <v-tabs-window-item value="eth">
-            <SummaryComponent
-              v-if="ethData"
-              :data="ethData"
-              :timestamp="ethTimestamp"
-              scannerUrl="https://etherscan.io/address/"
-              :refresh="getEth"
-            />
-          </v-tabs-window-item>
-          <v-tabs-window-item value="gtn">
-            <SummaryComponent
-              v-if="stabilityData"
-              :data="stabilityData"
-              :timestamp="stabilityTimestamp"
-              scannerUrl="https://stability.blockscout.com/address/"
-              :refresh="getStability"
-            />
-          </v-tabs-window-item>
-        </v-tabs-window>
-
-        <v-sheet max-width="600">
-          <v-slide-group show-arrows>
-            <v-slide-group-item>
-              <h2>test</h2>
-            </v-slide-group-item>
-
-          </v-slide-group>
-
-        </v-sheet>
-      </v-card>
+      <v-sparkline
+        :labels="totalDeployments.keys()"
+        :model-value="totalDeployments"
+        color="white"
+        line-width="2"
+        padding="16"
+      ></v-sparkline>
   </div>
   </template>
 
@@ -53,26 +14,19 @@
 
 
   <script>
-  import { ref, onMounted } from 'vue';
-  import SummaryComponent from '../components/SummaryComponent.vue';
-  import TokenRegistryComponent from '../components/TokenRegistryComponent.vue';
-  import Navbar from '@/components/Navbar.vue';
+  import { ref, onMounted, computed } from 'vue';
 
   
 
   export default{
     name: 'HomeView',
     components:{
-      SummaryComponent,
-      TokenRegistryComponent,
-      Navbar,
- 
     },
 
 
     data() {
 
-      const activeTab = ref(0);
+      
       const sepoliaData = ref(null);
       const ethData = ref(null);
       const stabilityData = ref(null);
@@ -136,10 +90,21 @@
         getEth();
       });
 
+      const totalDeployments = computed(()=>{
+        if (stabilityData && sepoliaData && ethData){
+          console.log(this.ethData.deployments);
+          // const sepolia = sepoliaData.deployments.numDeployments;
+          // const eth = ethData.deployments.numDeployments;
+          // const gtn = stabilityData.deployments.numDeployments;
+          // return {sepolia,eth,gtn};
+        }else{
+          console.log('data empty');
+        }
+      })
+
 
 
       return{
-        activeTab,
         getSepolia,
         getEth,
         getStability,
@@ -149,69 +114,17 @@
         sepoliaTimestamp,
         ethTimestamp,
         stabilityTimestamp,
-        fakeData : [{
-                          "deployer": "0xfcF70dd03050E295455DE2385376b920b0079C58",
-                          "deployed": [
-                              "0x8f6d18B240225CeF15fb2eE305E97F7c52ADc1eC",
-                              {
-                                  "number of tokens": 1
-                              },
-                              [
-                                  {
-                                      "tokenId": "69170160261383144995106450495134788611054042593254808028619120633882071262575",
-                                      "titleEscrow": "0xb884043e8199eF768e75EC51Fdd6e51b3dFFb3f5"
-                                  }
-                              ]
-                          ],
-                          "titleEscrowFactory": "0xA38CC56c9291B9C1f52F862dd92326d352e710b8"
-                      }],
-      
-      };
-    },
-
-    
-  } 
+        totalDeployments,
+        
+    }
+  }
+}
 
   </script>
 
 
   <style scoped>
-  .summary-box {
-    border: 1px solid black;
-    position: absolute;
-    top:0;
-    left:0;
-    margin-left:100px;
-    padding: 20px;
-    height: 600px;
-    width: 1320px;
-  }
 
-  .summary {
-    padding: 20px;
-  }
-
-  .uniques{
-    margin-top: 10px;
-    display:flex;
-    padding:10px;
-  }
-  .unique-deployers,
-  .unique-factory,
-  .unique-registries {
-    margin-right: 20px;
-    align-items: center;
-  }
-
-  .unique-deployers h3,
-  .unique-factory h3,
-  .unique-registries h3 {
-    margin-bottom: 5px;
-  }
-
-  .slide-group-item{
-    margin-right:5px;
-  }
 
 
 

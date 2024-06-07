@@ -16,7 +16,7 @@ export default async(request,context) => {
     const storedTimestamp = await combinedStore.get("timestamp", {type:"json"});
     console.log(`Stored timestamp: ${storedTimestamp}`);
 
-    const CACHE_DURATION = 1*60*1000; //1min
+    const CACHE_DURATION = 60*60*1000; //1 hour
 
     if (storedData && storedTimestamp && currentTime-storedTimestamp < CACHE_DURATION){
         console.log("Taking data from Blob");
