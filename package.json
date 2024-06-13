@@ -9,7 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@apollo/client": "^3.10.4",
     "@netlify/blobs": "^7.3.0",
+    "@vue/apollo-composable": "^4.0.2",
+    "graphql": "^16.8.1",
+    "graphql-tag": "^2.12.6",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",
     "vue3-jazzicon": "^0.1.4",
