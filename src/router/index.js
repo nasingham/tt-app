@@ -5,6 +5,7 @@ import SepoliaView from '@/views/SepoliaView.vue'
 import EthView from '@/views/EthView.vue'
 import StabilityView from '@/views/StabilityView.vue'
 import StabilityTestView from '@/views/StabilityTestView.vue'
+import XDCApothemView from '@/views/XDCApothemView.vue'
 
 
 const routes = [
@@ -40,6 +41,11 @@ const routes = [
     path:'/stability-testnet',
     name: 'stabilityTest',
     component: StabilityTestView,
+  },
+  {
+    path:'/xdc-apothem',
+    name: 'apothem',
+    component: XDCApothemView,
   }
 ]
 

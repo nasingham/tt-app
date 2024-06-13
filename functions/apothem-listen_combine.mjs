@@ -10,13 +10,13 @@ export default async(request,context) => {
     
     // const currentTime = 1717064413659 + 61*60*1000;
 
-    const combinedStore = getStore("stabilityTestnet");
+    const combinedStore = getStore("xdcapothem");
     
     const storedData = await combinedStore.get("data",{type: "json"});
     const storedTimestamp = await combinedStore.get("timestamp", {type:"json"});
     console.log(`Stored timestamp: ${storedTimestamp}`);
 
-    const CACHE_DURATION = 60*60*1000; //1 hour
+    const CACHE_DURATION = 1*60*1000; //1 hour
 
     if (storedData && storedTimestamp && currentTime-storedTimestamp < CACHE_DURATION){
         console.log("Taking data from Blob");
@@ -37,22 +37,24 @@ export default async(request,context) => {
         try{
             console.log("fetching data from blockchain...")
             const [fetch_deployments, fetch_titleCreated] = await Promise.all([
-                // fetch('http://localhost:9999/.netlify/functions/stabilityTest-listen_deployer'),
-                // fetch('http://localhost:9999/.netlify/functions/stabilityTest-listen_titleEscrow')
-                fetch ('https://tradetrust-app.netlify.app/.netlify/functions/stabilityTest-listen_deployer'),
-                fetch ('https://tradetrust-app.netlify.app/.netlify/functions/stabilityTest-listen_titleEscrow')
+                // fetch('http://localhost:9999/.netlify/functions/apothem-listen_deployer'),
+                // fetch('http://localhost:9999/.netlify/functions/apothem-listen_titleEscrow')
+                fetch ('https://tradetrust-app.netlify.app/.netlify/functions/apothem-listen_deployer'),
+                fetch ('https://tradetrust-app.netlify.app/.netlify/functions/apothem-listen_titleEscrow')
             ]);
             if (!fetch_deployments.ok || !fetch_titleCreated.ok){
                 throw new Error ("Error fetching in combine");
             }
             console.log('fetches successful');
-
+            // console.log({fetch_title:fetch_titleCreated});
             const deployments = await fetch_deployments.json();
             const titleCreated = await fetch_titleCreated.json();
             
             function bigintReplacer(key, value) {
                 return typeof value === 'bigint' ? value.toString() : value;
             }
+            console.log("deployments "+ deployments.returnValues);
+            // console.log(titleCreated);
             const input_deployments = JSON.stringify(deployments,bigintReplacer,2);
             const input_titleCreated = JSON.stringify(titleCreated,bigintReplacer,2);
             
@@ -93,8 +95,3 @@ export default async(request,context) => {
         };
     }
 }
-
-
-
-
-
