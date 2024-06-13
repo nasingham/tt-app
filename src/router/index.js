@@ -7,6 +7,7 @@ import StabilityView from '@/views/StabilityView.vue'
 import StabilityTestView from '@/views/StabilityTestView.vue'
 import XDCApothemView from '@/views/XDCApothemView.vue'
 import XDCView from '@/views/XDCView.vue'
+import AmoyView from '@/views/AmoyView.vue'
 
 
 const routes = [
@@ -52,6 +53,11 @@ const routes = [
     path: '/xdc',
     name: 'xdc',
     component: XDCView,
+  },
+  {
+    path: '/polygon-amoy',
+    name: 'amoy',
+    component: AmoyView,
   }
 ]
 

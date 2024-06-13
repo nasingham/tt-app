@@ -27,6 +27,7 @@
             <v-list-item  :to="{name:'stabilityTest'}" class="icon" prepend-icon="mdi-cube-outline" title="Stability Testnet" value="stabilityTest" ></v-list-item>
             <v-list-item  :to="{name:'xdc'}" class="icon" prepend-icon="mdi-alpha-x-circle" title="XDC Mainnet" value="xdc" ></v-list-item>
             <v-list-item  :to="{name:'apothem'}" class="icon" prepend-icon="mdi-alpha-x-circle-outline" title="XDC Apothem" value="xdcApothem" ></v-list-item>
+            <v-list-item  :to="{name:'amoy'}" class="icon" prepend-icon="mdi-hexagon-outline" title="Polygon Amoy" value="amoy" ></v-list-item>
             
           </v-list>
 
