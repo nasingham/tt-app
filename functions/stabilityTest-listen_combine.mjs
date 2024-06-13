@@ -16,7 +16,7 @@ export default async(request,context) => {
     const storedTimestamp = await combinedStore.get("timestamp", {type:"json"});
     console.log(`Stored timestamp: ${storedTimestamp}`);
 
-    const CACHE_DURATION = 60*60*1000; //1 hour
+    const CACHE_DURATION = 1*60*1000; //1 hour
 
     if (storedData && storedTimestamp && currentTime-storedTimestamp < CACHE_DURATION){
         console.log("Taking data from Blob");
@@ -37,8 +37,8 @@ export default async(request,context) => {
         try{
             console.log("fetching data from blockchain...")
             const [fetch_deployments, fetch_titleCreated] = await Promise.all([
-                // fetch('http://localhost:8888/.netlify/functions/sepolia-listen_deployer'),
-                // fetch('http://localhost:8888/.netlify/functions/sepolia-listen_titleEscrow')
+                // fetch('http://localhost:9999/.netlify/functions/stabilityTest-listen_deployer'),
+                // fetch('http://localhost:9999/.netlify/functions/stabilityTest-listen_titleEscrow')
                 fetch ('https://tradetrust-app.netlify.app/.netlify/functions/stabilityTest-listen_deployer'),
                 fetch ('https://tradetrust-app.netlify.app/.netlify/functions/stabilityTest-listen_titleEscrow')
             ]);

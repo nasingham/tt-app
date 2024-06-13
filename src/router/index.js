@@ -4,6 +4,7 @@ import HomeView from '@/views/HomeView.vue'
 import SepoliaView from '@/views/SepoliaView.vue'
 import EthView from '@/views/EthView.vue'
 import StabilityView from '@/views/StabilityView.vue'
+import StabilityTestView from '@/views/StabilityTestView.vue'
 
 
 const routes = [
@@ -34,6 +35,11 @@ const routes = [
     path: '/gtn',
     name: 'gtn',
     component: StabilityView,
+  },
+  {
+    path:'/stability-testnet',
+    name: 'stabilityTest',
+    component: StabilityTestView,
   }
 ]
 

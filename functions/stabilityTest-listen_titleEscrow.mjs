@@ -2,8 +2,8 @@
 import Web3 from 'web3';
 import { processEventsTitleEscrow } from './utils';
 
-const web3 = new Web3("https://gtn.stabilityprotocol.com/zgt/ez9zn4ay90dz");
-const titleEscrowFactory = "0x5B5F8d94782be18E22420f3276D5ef5a1bc65C53"
+const web3 = new Web3("https://free.testnet.stabilityprotocol.com/zgt/w6arr344usim");
+const titleEscrowFactory = "0xd334a95bbA0b666981fD067A5Edd505aFB6cFa1d"
 //ABI of Deployer
 const contractABI = [
     {

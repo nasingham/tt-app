@@ -2,8 +2,8 @@
 import Web3 from 'web3';
 import { processEventsDeployer } from './utils';
 
-const web3 = new Web3("https://gtn.stabilityprotocol.com/zgt/ez9zn4ay90dz");
-const deployer = "0x163A63415d1bf6DeE66B0624e2313fB9127a599b"
+const web3 = new Web3("https://free.testnet.stabilityprotocol.com/zgt/w6arr344usim");
+const deployer = "0xc9A4F6b4f7afAeC816f2CFB715bB92384Fa46BCa";
 //ABI of Deployer
 const contractABI = [
     {
