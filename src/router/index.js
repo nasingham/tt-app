@@ -6,6 +6,7 @@ import EthView from '@/views/EthView.vue'
 import StabilityView from '@/views/StabilityView.vue'
 import StabilityTestView from '@/views/StabilityTestView.vue'
 import XDCApothemView from '@/views/XDCApothemView.vue'
+import XDCView from '@/views/XDCView.vue'
 
 
 const routes = [
@@ -46,6 +47,11 @@ const routes = [
     path:'/xdc-apothem',
     name: 'apothem',
     component: XDCApothemView,
+  },
+  {
+    path: '/xdc',
+    name: 'xdc',
+    component: XDCView,
   }
 ]
 

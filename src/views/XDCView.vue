@@ -1,26 +1,26 @@
 <template>
-    <div class="apothem">
+    <div class="xdc">
         <div>
             <SummaryComponent
-                v-if="apothemData"
-                :data="apothemData"
-                :timestamp="apothemTimestamp"
-                scannerUrl="https://apothem.blocksscan.io/address/"
-                :refresh = "getApothem"
+                v-if="xdcData"
+                :data="xdcData"
+                :timestamp="xdcTimestamp"
+                scannerUrl="https://xdc.blocksscan.io/address/"
+                :refresh = "getXdc"
                 class="summary"
             />
         </div>
-        <div v-if="apothemData" class="tokenRegistry">
+        <div v-if="xdcData" class="tokenRegistry">
             <v-sheet max-width="1300">
                 <v-slide-group
                 class="vsg-1"
                 show-arrows>
                     <v-slide-group-item>
                         <TokenRegistryComponent 
-                            v-for="(registry, index) in apothemData.deployments.returnValues"
+                            v-for="(registry, index) in xdcData.deployments.returnValues"
                             :key="index"
                             :registry="registry"
-                            scannerUrl="https://apothem.blocksscan.io/address/"
+                            scannerUrl="https://xdc.blocksscan.io/address/"
                         />
                     </v-slide-group-item>
                 </v-slide-group>
@@ -36,14 +36,14 @@ import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
   
   export default {
 
-    name: 'XDCApothemView',
+    name: 'XDCView',
     components: {
         SummaryComponent,
         TokenRegistryComponent,
     },
     data(){
-        const apothemData = ref(null);
-        const apothemTimestamp = ref(null);
+        const xdcData = ref(null);
+        const xdcTimestamp = ref(null);
 
         const fetchData = async (url, dataRef, timestampRef) => {
             try {
@@ -64,25 +64,25 @@ import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
             }
         };
 
-        const getApothem = () => {
-            console.log('fetching stability')
+        const getXdc = () => {
+            console.log('fetching xdc')
             fetchData(
-                'https://tradetrust-app.netlify.app/.netlify/functions/apothem-listen_combine',
-                // 'http://localhost:9999/.netlify/functions/apothem-listen_combine',
-                apothemData,
-                apothemTimestamp
+                'https://tradetrust-app.netlify.app/.netlify/functions/xdc-listen_combine',
+                // 'http://localhost:9999/.netlify/functions/xdc-listen_combine',
+                xdcData,
+                xdcTimestamp
                 );
             // console.log(stabilityTimestamp);
         };
 
         onMounted(()=>{
-            getApothem();
+            getXdc();
         })
 
         return{
-            apothemData,
-            apothemTimestamp,
-            getApothem,
+            xdcData,
+            xdcTimestamp,
+            getXdc,
             fetchData,
         }
     }
@@ -93,7 +93,7 @@ import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
   
   <style scoped>
   /* Add your styles here if needed */
-.apothem {
+.xdc {
     display: flex;
     flex-direction: column;
     padding: 20px; /* Optional: Add padding for better spacing */
