@@ -103,13 +103,9 @@ export default {
   data(){
     const titleDeployments = "Deployments: " + this.data.deployments.numDeployments;
     const titleCreated = "Title Escrows Created: " + this.data.deployments.numCreated;
-    const standalones = () => {
-      if (this.data.deployments.uniqueStandalone && this.data.deployments.uniqueStandalone.length > 0){
-        return "Standalone Deployments: "+ this.data.deployments.uniqueStandalone.length;
-      }else{
-        return "Standalone Deployments: None";
-      }
-    }
+    const standalones = this.data.deployments.uniqueStandalone && this.data.deployments.uniqueStandalone.length > 0 
+    ? `Standalone Deployments: ${this.data.deployments.uniqueStandalone.length}`
+    : "Standalone Deployments: None";
 
     return {
       titleDeployments,
