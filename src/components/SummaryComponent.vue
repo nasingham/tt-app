@@ -3,23 +3,25 @@
     <div class="header">
       <div class="big-cards">
         <v-card
-        :title="titleDeployments"
-        variant="tonal"
         elevation="3"
-        :style="{ backgroundColor: '#4da6e8' , color: 'black'}"
-        />
-        <v-card
-        :title="titleCreated"
-        variant="tonal"
-        elevation="3"
-        :style="{ backgroundColor: '#4da6e8' , color: 'black'}">
+        >
+          <v-card-title class="big-title">Deployments</v-card-title>
+          <v-card-text class ="big-text">{{titleDeployments}}</v-card-text>
         </v-card>
         <v-card
-        :title="standalones"
-        variant="tonal"
+        
         elevation="3"
-        :style="{ backgroundColor: '#4da6e8' , color: 'black'}">
+        >
+          <v-card-title class="big-title">Title Escrows Created</v-card-title>
+          <v-card-text class ="big-text">{{titleCreated}}</v-card-text>
         </v-card>
+        <v-card v-if="data.deployments.uniqueStandalone"     
+        elevation="3"
+        >
+          <v-card-title class="big-title">Standalones</v-card-title>
+          <v-card-text class ="big-text">{{standalones}}</v-card-text>
+        </v-card>
+
       </div>
 
 
@@ -38,7 +40,6 @@
           :height="300"
           :items="data.deployments.uniqueDeployer"
           :item-height="5"
-          :width="300"
         >
           <template v-slot:default="{ item }">
             <a :href="scannerUrl + item" target="_blank">{{ item }}</a>
@@ -101,11 +102,11 @@ export default {
     refresh:Function,
   },
   data(){
-    const titleDeployments = "Deployments: " + this.data.deployments.numDeployments;
-    const titleCreated = "Title Escrows Created: " + this.data.deployments.numCreated;
+    const titleDeployments = this.data.deployments.numDeployments;
+    const titleCreated = this.data.deployments.numCreated;
     const standalones = this.data.deployments.uniqueStandalone && this.data.deployments.uniqueStandalone.length > 0 
-    ? `Standalone Deployments: ${this.data.deployments.uniqueStandalone.length}`
-    : "Standalone Deployments: None";
+    ? this.data.deployments.uniqueStandalone.length
+    : 0;
 
     return {
       titleDeployments,
@@ -123,17 +124,28 @@ export default {
 
 <style>
 .summary {
-  padding: 20px;
+  /* padding: 20px; */
+  width:100%;
 }
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width:100%;
 }
 .big-cards{
+  width:80%;
   display:flex;
-  column-gap:10px;
+  justify-content:left;
+  column-gap: 1%;
   padding:10px;
+}
+.big-title{
+  background-color: #4da6e8;
+}
+.big-text{
+  font-weight:bold;
+  font-size:40px;
 }
 .update{
   display:flex;
@@ -148,7 +160,7 @@ export default {
 .uniques {
   margin-top: 10px;
   display: flex;
-  column-gap:20px;
+  column-gap:1%;
   padding: 10px;
 }
 .unique-deployers,

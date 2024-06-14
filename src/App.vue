@@ -22,11 +22,14 @@ export default {
 </script>
 
 <style>
-html, body {
-  margin: 0;
-  height:100%;
+html, body, #app {
+  padding: 10px;
+  width: 100%;
+  height: 100%;
 }
-#app{
-  background-color: #F7F8FC;
+
+#app {
+  display: flex;
+  flex-direction: column;
 }
 </style>

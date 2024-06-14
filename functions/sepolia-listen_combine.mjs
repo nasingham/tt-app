@@ -53,7 +53,7 @@ export default async(request,context) => {
             function bigintReplacer(key, value) {
                 return typeof value === 'bigint' ? value.toString() : value;
             }
-            console.log("deployments "+ deployments.returnValues);
+            // console.log("deployments "+ deployments.returnValues);
             // console.log(titleCreated);
             const input_deployments = JSON.stringify(deployments,bigintReplacer,2);
             const input_titleCreated = JSON.stringify(titleCreated,bigintReplacer,2);
