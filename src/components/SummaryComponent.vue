@@ -14,6 +14,12 @@
         elevation="3"
         :style="{ backgroundColor: '#4da6e8' , color: 'black'}">
         </v-card>
+        <v-card
+        :title="standalones"
+        variant="tonal"
+        elevation="3"
+        :style="{ backgroundColor: '#4da6e8' , color: 'black'}">
+        </v-card>
       </div>
 
 
@@ -67,6 +73,20 @@
           </template>
         </v-virtual-scroll>
       </v-card>
+      <v-card  class="unique-standalones" v-if="data.deployments.uniqueStandalone">
+        <v-card-title :style="{ backgroundColor: '#4da6e8' }">Standalone Token Registries</v-card-title>
+        <v-virtual-scroll
+          class="scroller"
+          :height="300"
+          :items="data.deployments.uniqueStandalone"
+          :item-height="5"
+          :width="300"
+        >
+          <template v-slot:default="{ item }">
+            <a :href="scannerUrl + item" target="_blank">{{ item }}</a>
+          </template>
+        </v-virtual-scroll>
+      </v-card>
     </div>
   </div>
 </template>
@@ -83,10 +103,12 @@ export default {
   data(){
     const titleDeployments = "Deployments: " + this.data.deployments.numDeployments;
     const titleCreated = "Title Escrows Created: " + this.data.deployments.numCreated;
+    const standalones = "Standalone Deployments: "+ this.data.deployments.uniqueStandalone.length;
 
     return {
       titleDeployments,
       titleCreated,
+      standalones,
     }
   },
   methods:{
@@ -129,13 +151,15 @@ export default {
 }
 .unique-deployers,
 .unique-factory,
-.unique-registries {
+.unique-registries
+.unique-standalones {
   align-items: center;
 }
 
 .unique-deployers a,
 .unique-factory a,
-.unique-registries a{
+.unique-registries a,
+.unique-standalones a{
   color:blue;
 }
 .scroller{

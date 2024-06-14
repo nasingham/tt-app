@@ -90,6 +90,8 @@ export  function combine(string_deployments, string_titleCreated){
     // console.log('Type of deployments:', typeof string_deployments);
     console.log('Type of titleCreated:', typeof string_titleCreated);
     let deployments, titleCreated;
+    const standalone = new Array();
+    const uniqueStandalone = new Set();
 
     try {
         deployments = JSON.parse(string_deployments);
@@ -118,6 +120,8 @@ export  function combine(string_deployments, string_titleCreated){
         deployments.returnValues.forEach(deployment => {
             const deployed = deployment.deployed;
             const contents = new Array();
+            
+            
             // deployment.deployed = [deployed, {'number of tokens':0},[]];
             
             
@@ -133,7 +137,11 @@ export  function combine(string_deployments, string_titleCreated){
                 const content = {txnHash,tokenId,titleEscrow,blockNumber};
                 if (deployed === tokenReg){
                     contents.push(content);
+                } else{
+                    standalone.push({txnHash,blockNumber,tokenReg,tokenId,titleEscrow});
+                    uniqueStandalone.add(tokenReg);
                 }
+
                 
             })
             const num_tokens = contents.size;
@@ -142,6 +150,8 @@ export  function combine(string_deployments, string_titleCreated){
             
         });
         deployments.numCreated = titleCreated.numCreated;
+        deployments.standalone = standalone;
+        deployments.uniqueStandalone = Array.from(uniqueStandalone);
 
         
 
