@@ -67,7 +67,7 @@ import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
         const getAmoy = () => {
             console.log('fetching amoy')
             fetchData(
-                'https://tradetrust-app.netlify.app/.netlify/functions/amoy-listen_combine',
+                'https://tradetrust-scan.netlify.app/.netlify/functions/amoy-listen_combine',
                 // 'http://localhost:9999/.netlify/functions/amoy-listen_combine',
                 amoyData,
                 amoyTimestamp
