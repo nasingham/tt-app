@@ -132,7 +132,7 @@ export default async (request,context) => {
         }
     
         const events = await contract.getPastEvents('Deployment',{
-            fromBlock: 0,
+            fromBlock: 1846504, //sepolia Deployer creation block
             toBlock: 'latest',
         });
         

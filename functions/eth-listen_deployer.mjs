@@ -130,7 +130,7 @@ export default async (request,context) => {
         }
     
     const events = await contract.getPastEvents('Deployment',{
-        fromBlock: 0,
+        fromBlock: 16047030, //eth mainnet deployer creation block
         toBlock: 'latest',
     });
 

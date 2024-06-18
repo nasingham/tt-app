@@ -111,7 +111,7 @@ export default async (request,context) => {
         }
     
     const events = await contract.getPastEvents('TitleEscrowCreated',{
-        fromBlock: 0,
+        fromBlock: 16047114, //eth mainnet title escrow factory creation block
         toBlock: 'latest',
     });
 

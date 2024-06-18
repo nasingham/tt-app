@@ -20,7 +20,7 @@ const cache = new InMemoryCache()
 const httpLink = new HttpLink({ uri: 'https://eth-sepolia.blockscout.com/graphiql' });
 const authMiddleware = new ApolloLink((operation, forward) => {
     // add the authorization to the headers
-  const token = "d7efcd40-4268-49e9-8295-a2c52f8c9d1d"
+  const token = ""
     operation.setContext({
       headers: {
         authorization: token ? `Bearer ${token}` : "",

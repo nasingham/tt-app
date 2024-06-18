@@ -111,7 +111,7 @@ export default async (request,context) => {
         }
     
     const events = await contract.getPastEvents('TitleEscrowCreated',{
-        fromBlock: 0,
+        fromBlock: 3296, //stability testnet title creation block
         toBlock: 'latest',
     });
 
