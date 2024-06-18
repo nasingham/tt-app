@@ -106,7 +106,7 @@ export  function combine(string_deployments, string_titleCreated){
         console.error('Error parsing titleCreated:', error);
         return { error: 'Invalid titleCreated data' };
     }
-    console.log(deployments.returnValues);
+    // console.log(deployments.returnValues);
     if (!deployments.returnValues || !Array.isArray(deployments.returnValues)) {
         console.error('Invalid structure for deployments.returnValues');
         return { error: 'Invalid structure for deployments' };

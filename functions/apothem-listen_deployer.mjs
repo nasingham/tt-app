@@ -2,7 +2,7 @@
 import Web3 from 'web3';
 import { processEventsDeployer } from './utils';
 
-const url = "https://erpc.apothem.network"  // url string
+const url = "https://tradetrustarpc.xdcrpc.com"  // url string
 
 const web3 = new Web3(new Web3.providers.HttpProvider(url));
 

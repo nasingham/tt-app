@@ -108,13 +108,34 @@ export default async (request,context) => {
         function bigintReplacer(key, value) {
             return typeof value === 'bigint' ? value.toString() : value;
         }
-    
-        const events = await contract.getPastEvents('TitleEscrowCreated',{
-            fromBlock: 2428240, //sepolia Title Escrow Factory creation block
-            toBlock: 'latest',
+
+        const startBlock = 2428240; //sepolia Title creation block
+        const endBlock = Number(await web3.eth.getBlockNumber());
+        const batchSize = 500000; // Adjust this size based on your needs
+        // let currentBlock = startBlock;
+        let allEvents = [];
+
+        const getBatchEvents = async (fromBlock, toBlock) => {
+          console.log('fromblock ',fromBlock);
+          return await contract.getPastEvents('TitleEscrowCreated', {
+              fromBlock: fromBlock,
+              toBlock: toBlock,
+          });
+        };
+
+        const promises = [];
+        for (let currentBlock = startBlock; currentBlock <= endBlock; currentBlock += batchSize) {
+            const fromBlock = currentBlock;
+            const toBlock = Math.min(currentBlock + batchSize - 1, endBlock);
+            promises.push(getBatchEvents(fromBlock, toBlock));
+        }
+
+        const results = await Promise.all(promises);
+        results.forEach(events => {
+            allEvents = allEvents.concat(events);
         });
 
-        const processed =  processEventsTitleEscrow(events);
+        const processed =  processEventsTitleEscrow(allEvents);
         const response = JSON.stringify(processed,bigintReplacer,2);
         return new Response(response, {
             headers: { 'Content-Type': 'application/json',

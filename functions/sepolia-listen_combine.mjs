@@ -1,5 +1,6 @@
-import { combine } from "./utils";
+import { combine } from "./utils.js";
 import { getStore } from '@netlify/blobs';
+import zlib from 'node:zlib';
 
 export default async(request,context) => {
 
@@ -16,7 +17,19 @@ export default async(request,context) => {
     const storedTimestamp = await combinedStore.get("timestamp", {type:"json"});
     console.log(`Stored timestamp: ${storedTimestamp}`);
 
-    const CACHE_DURATION = 60*60*1000; //1 hour
+    const CACHE_DURATION = 1*60*1000; //1 hour
+
+    const gzipResponse = (data) => {
+        return new Promise((resolve, reject) => {
+          zlib.gzip(data, (error, result) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(result);
+            }
+          });
+        });
+      };
 
     if (storedData && storedTimestamp && currentTime-storedTimestamp < CACHE_DURATION){
         console.log("Taking data from Blob");
@@ -25,8 +38,14 @@ export default async(request,context) => {
             data : storedData,
             timestamp : storedTimestamp,
         };
-        return new Response(JSON.stringify(processed,null,2), {
-            headers: { 'Content-Type': 'application/json',
+        const response = JSON.stringify(processed, null, 2);
+
+        const compressedResponse = await gzipResponse(response);
+
+        return new Response(compressedResponse, {
+            headers: { 
+            'Content-Type': 'application/json',
+            'Content-Encoding': 'gzip',
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Headers": "Content-Type",
             "Access-Control-Allow-Methods": "GET, POST, OPTION",
@@ -36,12 +55,15 @@ export default async(request,context) => {
 
         try{
             console.log("fetching data from blockchain...")
-            const [fetch_deployments, fetch_titleCreated] = await Promise.all([
-                // fetch('http://localhost:9999/.netlify/functions/sepolia-listen_deployer'),
-                // fetch('http://localhost:9999/.netlify/functions/sepolia-listen_titleEscrow')
-                fetch ('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_deployer'),
-                fetch ('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_titleEscrow')
-            ]);
+            // const [fetch_deployments, fetch_titleCreated] = await Promise.all([
+            //     fetch('http://localhost:9999/.netlify/functions/sepolia-listen_deployer'),
+            //     fetch('http://localhost:9999/.netlify/functions/sepolia-listen_titleEscrow')
+            //     // fetch ('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_deployer'),
+            //     // fetch ('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_titleEscrow')
+            // ]);
+
+            const fetch_deployments = await fetch('http://localhost:9999/.netlify/functions/sepolia-listen_deployer');
+            const fetch_titleCreated = await fetch('http://localhost:9999/.netlify/functions/sepolia-listen_titleEscrow');
             if (!fetch_deployments.ok || !fetch_titleCreated.ok){
                 throw new Error ("Error fetching in combine");
             }
@@ -75,8 +97,16 @@ export default async(request,context) => {
             };
             
             const jsonString = JSON.stringify(processed, bigintReplacer, 2);
-            return new Response(jsonString, {
-                headers: { 'Content-Type': 'application/json',
+            console.log(`Response size: ${jsonString.length} bytes`);
+
+            const compressedResponse = await gzipResponse(jsonString);
+            console.log(`Compressed response size: ${compressedResponse.length} bytes`);
+
+
+            return new Response(compressedResponse, {
+                headers: { 
+                'Content-Type': 'application/json',
+                'Content-Encoding': 'gzip',
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "Content-Type",
                 "Access-Control-Allow-Methods": "GET, POST, OPTION",

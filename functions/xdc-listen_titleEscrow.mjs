@@ -2,7 +2,7 @@
 import Web3 from 'web3';
 import { processEventsTitleEscrow } from './utils';
 
-const url = "https://erpc.xinfin.network/"  // url string
+const url = "https://tradetrustrpc.xdcrpc.com"  // url string
 
 const web3 = new Web3(new Web3.providers.HttpProvider(url));
 const titleEscrowFactory = "0x50BfCc1b699fD2308B978B7a6A26e3C3Bbad16DC"
