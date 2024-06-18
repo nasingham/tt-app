@@ -21,7 +21,7 @@
           
           <v-card-title class="big-title">
             Standalones
-            <v-icon class="info-icon" v-tooltip:end="'Number of registries that used the Title Escrow Factory without the Deployer'">mdi-information</v-icon>
+            <v-icon class="info-icon" size="x-small" v-tooltip:end="'Number of registries that used the Title Escrow Factory without the Deployer'">mdi-information</v-icon>
           </v-card-title>
           <v-card-text class ="big-text">{{standalones}}</v-card-text>
         </v-card>

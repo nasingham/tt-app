@@ -6,7 +6,7 @@
               :data="sepoliaData"
               :timestamp="sepoliaTimestamp"
               scannerUrl="https://sepolia.etherscan.io/address/"
-              :refresh = "getSepolia"
+              :refresh = "updateSepolia"
               class="summary"
             />
         </div>
@@ -52,12 +52,12 @@ import { ref, onMounted } from 'vue';
                 throw new Error('Network response not ok');
             }
             const result = await response.json();
-            console.log('result');
-            console.log(result);
+            // console.log('result');
+            // console.log(result);
             dataRef.value = result.data;  
-            console.log(typeof result.timestamp);
+            // console.log(typeof result.timestamp);
             timestampRef.value = (new Date((parseInt(result.timestamp)))).toLocaleString();
-            console.log('fetch data time  ' + timestampRef.value);
+            // console.log('fetch data time  ' + timestampRef.value);
             } catch (err) {
             console.log(err);
             error.value = err.toString();
@@ -67,12 +67,20 @@ import { ref, onMounted } from 'vue';
         const getSepolia = () => {
             console.log('fetching sepolia')
             fetchData(
-                'https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_combine',
+                // 'https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_combine',
+                'https://tradetrust-app.netlify.app/.netlify/functions/sepolia-fetch',
                 sepoliaData,
                 sepoliaTimestamp
                 );
             // console.log(sepoliaTimestamp);
         };
+
+        const updateSepolia = async () =>{
+            const response = await fetch('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-background', {
+                method: "POST",
+            });
+            console.log(response);
+        }
 
         onMounted(()=>{
             getSepolia();
@@ -84,6 +92,7 @@ import { ref, onMounted } from 'vue';
             sepoliaTimestamp,
             getSepolia,
             fetchData,
+            updateSepolia,
         }
     }
 
