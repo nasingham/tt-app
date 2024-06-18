@@ -65,8 +65,8 @@ export default async(request,context) => {
             // const fetch_deployments = await fetch('http://localhost:9999/.netlify/functions/sepolia-listen_deployer');
             // const fetch_titleCreated = await fetch('http://localhost:9999/.netlify/functions/sepolia-listen_titleEscrow');
 
-            const fetch_deployments = await fetch('https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-listen_deployer');
-            const fetch_titleCreated = await fetch('https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-listen_titleEscrow');
+            const fetch_deployments = await fetch('https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-deployer');
+            const fetch_titleCreated = await fetch('https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-titleEscrow');
             if (!fetch_deployments.ok || !fetch_titleCreated.ok){
                 throw new Error ("Error fetching in combine");
             }
