@@ -1,4 +1,5 @@
 import { getStore } from '@netlify/blobs';
+import zlib from 'node:zlib';
 
 export default async(request,context) => {
 
@@ -8,6 +9,20 @@ export default async(request,context) => {
     //Use this to force an update to Blob
     
     // const currentTime = 1717064413659 + 61*60*1000;
+
+    const gzipResponse = (data) => {
+            return new Promise((resolve, reject) => {
+              zlib.gzip(data, (error, result) => {
+                if (error) {
+                  reject(error);
+                } else {
+                  resolve(result);
+                }
+              });
+            });
+          };
+
+
     try{
         const combinedStore = getStore("sepolia");
         
@@ -38,12 +53,12 @@ export default async(request,context) => {
             };
             const response = JSON.stringify(processed, null, 2);
 
-            // const compressedResponse = await gzipResponse(response);
+            const compressedResponse = await gzipResponse(response);
 
-            return new Response(response, {
+            return new Response(compressedResponse, {
                 headers: { 
                 'Content-Type': 'application/json',
-                // 'Content-Encoding': 'gzip',
+                'Content-Encoding': 'gzip',
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "Content-Type",
                 "Access-Control-Allow-Methods": "GET, POST, OPTION",
