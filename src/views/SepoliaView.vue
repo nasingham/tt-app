@@ -68,7 +68,7 @@ import { ref, onMounted } from 'vue';
             console.log('fetching sepolia')
             fetchData(
                 // 'https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_combine',
-                'https://tradetrust-app.netlify.app/.netlify/functions/sepolia-fetch',
+                'https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-fetch',
                 sepoliaData,
                 sepoliaTimestamp
                 );
@@ -76,7 +76,7 @@ import { ref, onMounted } from 'vue';
         };
 
         const updateSepolia = async () =>{
-            const response = await fetch('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-background', {
+            const response = await fetch('https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-background', {
                 method: "POST",
             });
             console.log(response);
