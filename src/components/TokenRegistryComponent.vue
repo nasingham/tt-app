@@ -1,6 +1,14 @@
 <template>
     <div class="tokenregistry">
-        <v-card :title="registry.deployed.deployed" :subtitle="registry.titleEscrowFactory" >
+        <v-card >
+            <div class="header">
+                <v-card-title>
+                    <a style="color:black" :href="scannerUrl + registry.deployed.deployed" target="_blank">{{ registry.deployed.deployed }}</a>
+                </v-card-title>
+                <v-card-subtitle>
+                    <a style="color:black" :href="scannerUrl + registry.titleEscrowFactory" target="_blank">{{ registry.titleEscrowFactory }}</a>
+                </v-card-subtitle>
+            </div>
             <v-divider></v-divider>
             <div class="content">
                 
@@ -58,6 +66,14 @@ export default{
     font-size: small;
 }
 
+.tokenregistry .header{
+    background-color: #3aaf86;
+}
+
+/* .tokenregistry .v-card{
+    background-color: #e7eaec;
+} */
+
 .item {
   display: flex;
   justify-content: space-between;
@@ -65,7 +81,7 @@ export default{
   padding:10px;  
 }
 .item a{
-    color:blue;
+    /* color:blue; */
 }
 
 

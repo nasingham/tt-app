@@ -18,7 +18,11 @@
         <v-card v-if="data.deployments.uniqueStandalone"     
         elevation="3"
         >
-          <v-card-title class="big-title">Standalones</v-card-title>
+          
+          <v-card-title class="big-title">
+            Standalones
+            <v-icon class="info-icon" v-tooltip:end="'Number of registries that used the Title Escrow Factory without the Deployer'">mdi-information</v-icon>
+          </v-card-title>
           <v-card-text class ="big-text">{{standalones}}</v-card-text>
         </v-card>
 
@@ -122,7 +126,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .summary {
   /* padding: 20px; */
   width:100%;
