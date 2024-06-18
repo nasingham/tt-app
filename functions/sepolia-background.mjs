@@ -4,7 +4,7 @@ import zlib from 'node:zlib';
 
 export default async(request,context) => {
 
-    // const currentTime = new Date().getTime();
+    const currentTime = new Date().getTime();
     // console.log(`Current time: ${currentTime}`);
 
     // //Use this to force an update to Blob
@@ -65,8 +65,8 @@ export default async(request,context) => {
             // const fetch_deployments = await fetch('http://localhost:9999/.netlify/functions/sepolia-listen_deployer');
             // const fetch_titleCreated = await fetch('http://localhost:9999/.netlify/functions/sepolia-listen_titleEscrow');
 
-            const fetch_deployments = await fetch('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_deployer');
-            const fetch_titleCreated = await fetch('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_titleEscrow');
+            const fetch_deployments = await fetch('https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-listen_deployer');
+            const fetch_titleCreated = await fetch('https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-listen_titleEscrow');
             if (!fetch_deployments.ok || !fetch_titleCreated.ok){
                 throw new Error ("Error fetching in combine");
             }
