@@ -17,7 +17,7 @@
                 show-arrows>
                     <v-slide-group-item>
                         <TokenRegistryComponent 
-                            v-for="(registry, index) in ethData.deployments.returnValues"
+                            v-for="(registry, index) in ethData.returnValues"
                             :key="index"
                             :registry="registry"
                             scannerUrl="https://etherscan.io/address/"

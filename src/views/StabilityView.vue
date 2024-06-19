@@ -17,7 +17,7 @@
                 show-arrows>
                     <v-slide-group-item>
                         <TokenRegistryComponent 
-                            v-for="(registry, index) in stabilityData.deployments.returnValues"
+                            v-for="(registry, index) in stabilityData.returnValues"
                             :key="index"
                             :registry="registry"
                             scannerUrl="https://stability.blockscout.com/address/"

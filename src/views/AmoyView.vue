@@ -17,7 +17,7 @@
                 show-arrows>
                     <v-slide-group-item>
                         <TokenRegistryComponent 
-                            v-for="(registry, index) in amoyData.deployments.returnValues"
+                            v-for="(registry, index) in amoyData.returnValues"
                             :key="index"
                             :registry="registry"
                             scannerUrl="https://amoy.polygonscan.com/address/"

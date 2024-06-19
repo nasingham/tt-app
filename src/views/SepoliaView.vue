@@ -17,7 +17,7 @@
                 show-arrows>
                     <v-slide-group-item>
                         <TokenRegistryComponent 
-                            v-for="(registry, index) in sepoliaData.deployments.returnValues"
+                            v-for="(registry, index) in sepoliaData.returnValues"
                             :key="index"
                             :registry="registry"
                             scannerUrl="https://sepolia.etherscan.io/address/"

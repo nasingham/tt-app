@@ -17,7 +17,7 @@
                 show-arrows>
                     <v-slide-group-item>
                         <TokenRegistryComponent 
-                            v-for="(registry, index) in xdcData.deployments.returnValues"
+                            v-for="(registry, index) in xdcData.returnValues"
                             :key="index"
                             :registry="registry"
                             scannerUrl="https://xdc.blocksscan.io/address/"

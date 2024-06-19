@@ -17,7 +17,7 @@
                 show-arrows>
                     <v-slide-group-item>
                         <TokenRegistryComponent 
-                            v-for="(registry, index) in apothemData.deployments.returnValues"
+                            v-for="(registry, index) in apothemData.returnValues"
                             :key="index"
                             :registry="registry"
                             scannerUrl="https://apothem.blocksscan.io/address/"

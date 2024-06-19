@@ -17,7 +17,7 @@
                 show-arrows>
                     <v-slide-group-item>
                         <TokenRegistryComponent 
-                            v-for="(registry, index) in polygonData.deployments.returnValues"
+                            v-for="(registry, index) in polygonData.returnValues"
                             :key="index"
                             :registry="registry"
                             scannerUrl="https://polygonscan.com/address/"
