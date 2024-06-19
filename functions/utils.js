@@ -139,10 +139,10 @@ export  function combine(string_deployments, string_titleCreated){
                     contents.push(content);
                 } else{
                     uniqueStandalone.add(tokenReg);
-                    if (!standaloneMap.has(tokenRegistry)) {
-                        standaloneMap.set(tokenRegistry, []);
+                    if (!standaloneMap.has(tokenReg)) {
+                        standaloneMap.set(tokenReg, []);
                     }
-                    standaloneMap.get(tokenRegistry).push(content);
+                    standaloneMap.get(tokenReg).push(content);
                     
                     
                 }
