@@ -90,7 +90,7 @@ export  function combine(string_deployments, string_titleCreated){
     // console.log('Type of deployments:', typeof string_deployments);
     console.log('Type of titleCreated:', typeof string_titleCreated);
     let deployments, titleCreated;
-    const standalone = new Array();
+    const standaloneMap = new Map();
     const uniqueStandalone = new Set();
 
     try {
@@ -138,20 +138,31 @@ export  function combine(string_deployments, string_titleCreated){
                 if (deployed === tokenReg){
                     contents.push(content);
                 } else{
-                    standalone.push({txnHash,blockNumber,tokenReg,tokenId,titleEscrow});
                     uniqueStandalone.add(tokenReg);
+                    if (!standaloneMap.has(tokenRegistry)) {
+                        standaloneMap.set(tokenRegistry, []);
+                    }
+                    standaloneMap.get(tokenRegistry).push(content);
+                    
+                    
                 }
 
                 
-            })
+            });
             const num_tokens = contents.length;
             const deployed_info = {deployed,num_tokens,contents}
             deployment.deployed = deployed_info;
             
         });
         deployments.numCreated = titleCreated.numCreated;
-        deployments.standalone = standalone;
+        
         deployments.uniqueStandalone = Array.from(uniqueStandalone);
+        const standalone = Array.from(standaloneMap.entries()).map(([tokenReg, contents]) => ({
+            tokenReg,
+            num_tokens: contents.length,
+            contents
+        }));
+        deployments.standalone = standalone;
 
         
 
