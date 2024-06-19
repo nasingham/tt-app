@@ -144,7 +144,7 @@ export  function combine(string_deployments, string_titleCreated){
 
                 
             })
-            const num_tokens = contents.size;
+            const num_tokens = contents.length;
             const deployed_info = {deployed,num_tokens,contents}
             deployment.deployed = deployed_info;
             
