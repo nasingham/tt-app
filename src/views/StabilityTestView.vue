@@ -6,7 +6,7 @@
                 :data="stabilityTestData"
                 :timestamp="stabilityTestTimestamp"
                 scannerUrl="https://stability-testnet.blockscout.com/address/"
-                :refresh = "getStabilityTest"
+                :refresh = "updateData"
                 class="summary"
             />
         </div>
@@ -17,7 +17,7 @@
                 show-arrows>
                     <v-slide-group-item>
                         <TokenRegistryComponent 
-                            v-for="(registry, index) in stabilityTestData.deployments.returnValues"
+                            v-for="(registry, index) in stabilityTestData.returnValues"
                             :key="index"
                             :registry="registry"
                             scannerUrl="https://stability-testnet.blockscout.com/address/"
@@ -44,20 +44,22 @@ import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
     data(){
         const stabilityTestData = ref(null);
         const stabilityTestTimestamp = ref(null);
+        const storeName = "stabilityTestnet";
 
-        const fetchData = async (url, dataRef, timestampRef) => {
+        const fetchData = async (storeName, dataRef, timestampRef) => {
             try {
-            const response = await fetch(url);
+            const response = await fetch(`http://localhost:8888/.netlify/functions/fetch?storeName=${storeName}`);
+            // const response = await fetch(`https://tradetrust-scan.netlify.app/.netlify/functions/fetch?storeName=${storeName}`);
             if (!response.ok) {
                 throw new Error('Network response not ok');
             }
             const result = await response.json();
-            console.log('result');
-            console.log(result);
+            // console.log('result');
+            // console.log(result);
             dataRef.value = result.data;  
-            console.log(typeof result.timestamp);
+            // console.log(typeof result.timestamp);
             timestampRef.value = (new Date((parseInt(result.timestamp)))).toLocaleString();
-            console.log('fetch data time  ' + timestampRef.value);
+            // console.log('fetch data time  ' + timestampRef.value);
             } catch (err) {
             console.log(err);
             error.value = err.toString();
@@ -67,13 +69,22 @@ import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
         const getStabilityTest = () => {
             console.log('fetching stability')
             fetchData(
-                'https://tradetrust-app.netlify.app/.netlify/functions/stabilityTest-listen_combine',
-                // 'http://localhost:9999/.netlify/functions/stabilityTest-listen_combine',
+                storeName,
                 stabilityTestData,
                 stabilityTestTimestamp
                 );
             // console.log(stabilityTimestamp);
         };
+        const updateData = async () =>{
+            console.log('updating');
+            const response = await fetch(`https://tradetrust-scan.netlify.app/.netlify/functions/update-background?storeName=${storeName}`, {
+                method: "POST",
+            });
+            // const response = await fetch(`http://localhost:8888/.netlify/functions/update-background?storeName=${storeName}`, {
+            //     method: "POST",
+            // });
+            console.log(response);
+        }
 
         onMounted(()=>{
             getStabilityTest();
@@ -84,6 +95,7 @@ import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
             stabilityTestTimestamp,
             getStabilityTest,
             fetchData,
+            updateData,
         }
     }
 

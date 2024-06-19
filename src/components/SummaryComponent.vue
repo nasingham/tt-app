@@ -15,7 +15,7 @@
           <v-card-title class="big-title">Title Escrows Created</v-card-title>
           <v-card-text class ="big-text">{{titleCreated}}</v-card-text>
         </v-card>
-        <v-card v-if="data.deployments.uniqueStandalone"     
+        <v-card v-if="data.uniqueStandalone"     
         elevation="3"
         >
           
@@ -42,7 +42,7 @@
         <v-virtual-scroll
           class="scroller"
           :height="300"
-          :items="data.deployments.uniqueDeployer"
+          :items="data.uniqueDeployer"
           :item-height="5"
         >
           <template v-slot:default="{ item }">
@@ -55,7 +55,7 @@
         <v-virtual-scroll
           class="scroller"
           :height="300"
-          :items="data.deployments.uniqueFactory"
+          :items="data.uniqueFactory"
           :item-height="5"
           :width="300"
         >
@@ -64,12 +64,12 @@
           </template>
         </v-virtual-scroll>
       </v-card>
-      <v-card  class="unique-registries" v-if="data.deployments.uniqueDeployed">
+      <v-card  class="unique-registries" v-if="data.uniqueDeployed">
         <v-card-title :style="{ backgroundColor: '#4da6e8' }">Token Registries</v-card-title>
         <v-virtual-scroll
           class="scroller"
           :height="300"
-          :items="data.deployments.uniqueDeployed"
+          :items="data.uniqueDeployed"
           :item-height="5"
           :width="300"
         >
@@ -78,12 +78,12 @@
           </template>
         </v-virtual-scroll>
       </v-card>
-      <v-card  class="unique-standalones" v-if="data.deployments.uniqueStandalone">
+      <v-card  class="unique-standalones" v-if="data.uniqueStandalone">
         <v-card-title :style="{ backgroundColor: '#4da6e8' }">Standalone Token Registries</v-card-title>
         <v-virtual-scroll
           class="scroller"
           :height="300"
-          :items="data.deployments.uniqueStandalone"
+          :items="data.uniqueStandalone"
           :item-height="5"
           :width="300"
         >
@@ -106,10 +106,10 @@ export default {
     refresh:Function,
   },
   data(){
-    const titleDeployments = this.data.deployments.numDeployments;
-    const titleCreated = this.data.deployments.numCreated;
-    const standalones = this.data.deployments.uniqueStandalone && this.data.deployments.uniqueStandalone.length > 0 
-    ? this.data.deployments.uniqueStandalone.length
+    const titleDeployments = this.data.numDeployments;
+    const titleCreated = this.data.numCreated;
+    const standalones = this.data.uniqueStandalone && this.data.uniqueStandalone.length > 0 
+    ? this.data.uniqueStandalone.length
     : 0;
 
     return {

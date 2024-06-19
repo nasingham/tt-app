@@ -6,7 +6,7 @@
                 :data="polygonData"
                 :timestamp="polygonTimestamp"
                 scannerUrl="https://polygonscan.com/address/"
-                :refresh = "getPolygon"
+                :refresh = "updateData"
                 class="summary"
             />
         </div>
@@ -44,20 +44,22 @@ import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
     data(){
         const polygonData = ref(null);
         const polygonTimestamp = ref(null);
+        const storeName = "polygon";
 
-        const fetchData = async (url, dataRef, timestampRef) => {
+        const fetchData = async (storeName, dataRef, timestampRef) => {
             try {
-            const response = await fetch(url);
+            // const response = await fetch(`http://localhost:9999/.netlify/functions/fetch?storeName=${storeName}`);
+            const response = await fetch(`https://tradetrust-scan.netlify.app/.netlify/functions/fetch?storeName=${storeName}`);
             if (!response.ok) {
                 throw new Error('Network response not ok');
             }
             const result = await response.json();
-            console.log('result');
-            console.log(result);
+            // console.log('result');
+            // console.log(result);
             dataRef.value = result.data;  
-            console.log(typeof result.timestamp);
+            // console.log(typeof result.timestamp);
             timestampRef.value = (new Date((parseInt(result.timestamp)))).toLocaleString();
-            console.log('fetch data time  ' + timestampRef.value);
+            // console.log('fetch data time  ' + timestampRef.value);
             } catch (err) {
             console.log(err);
             error.value = err.toString();
@@ -67,13 +69,22 @@ import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
         const getPolygon = () => {
             console.log('fetching polygon')
             fetchData(
-                'https://tradetrust-app.netlify.app/.netlify/functions/polygon-listen_combine',
-                // 'http://localhost:9999/.netlify/functions/polygon-listen_combine',
+                storeName,
                 polygonData,
                 polygonTimestamp
                 );
             // console.log(stabilityTimestamp);
         };
+        const updateData = async () =>{
+            console.log('updating');
+            const response = await fetch(`https://tradetrust-scan.netlify.app/.netlify/functions/update-background?storeName=${storeName}`, {
+                method: "POST",
+            });
+            // const response = await fetch(`http://localhost:8888/.netlify/functions/update-background?storeName=${storeName}`, {
+            //     method: "POST",
+            // });
+            console.log(response);
+        }
 
         onMounted(()=>{
             getPolygon();
@@ -84,6 +95,7 @@ import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
             polygonTimestamp,
             getPolygon,
             fetchData,
+            updateData,
         }
     }
 
