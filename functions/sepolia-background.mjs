@@ -12,6 +12,9 @@ export default async(request,context) => {
     // // const currentTime = 1717064413659 + 61*60*1000;
 
     const combinedStore = getStore("sepolia");
+    await combinedStore.delete("data");
+    console.log('deleted');
+
     
     // const storedData = await combinedStore.get("data",{type: "json"});
     // const storedTimestamp = await combinedStore.get("timestamp", {type:"json"});
@@ -62,11 +65,11 @@ export default async(request,context) => {
             //     // fetch ('https://tradetrust-app.netlify.app/.netlify/functions/sepolia-listen_titleEscrow')
             // ]);
 
-            // const fetch_deployments = await fetch('http://localhost:9999/.netlify/functions/sepolia-listen_deployer');
-            // const fetch_titleCreated = await fetch('http://localhost:9999/.netlify/functions/sepolia-listen_titleEscrow');
+            const fetch_deployments = await fetch('http://localhost:9999/.netlify/functions/sepolia-deployer');
+            const fetch_titleCreated = await fetch('http://localhost:9999/.netlify/functions/sepolia-titleEscrow');
 
-            const fetch_deployments = await fetch('https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-deployer');
-            const fetch_titleCreated = await fetch('https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-titleEscrow');
+            // const fetch_deployments = await fetch('https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-deployer');
+            // const fetch_titleCreated = await fetch('https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-titleEscrow');
             if (!fetch_deployments.ok || !fetch_titleCreated.ok){
                 throw new Error ("Error fetching in combine");
             }
@@ -86,12 +89,17 @@ export default async(request,context) => {
             console.log('combining...')
             const combined = combine(input_deployments,input_titleCreated);
             const newTimestamp = currentTime;
+
+            for (const [key,value] of Object.entries(combined.deployments)){
+                await combinedStore.setJSON(key,value);
+            }
             
 
-            await combinedStore.setJSON("data",combined);
-            await combinedStore.set("timestamp",newTimestamp);
+            // await combinedStore.setJSON("data",combined);
+            await combinedStore.set("blobTimestamp",newTimestamp);
             // console.log('processed data: '+ JSON.stringify(processed.data,null,2));
             console.log('data set to Blob');
+            console.log(await combinedStore.list());
 
 
             // const processed = {

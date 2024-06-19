@@ -26,8 +26,8 @@ export default async(request,context) => {
     try{
         const combinedStore = getStore("sepolia");
         
-        const storedData = await combinedStore.get("data",{type: "json"});
-        const storedTimestamp = await combinedStore.get("timestamp", {type:"json"});
+        const storedData = await combinedStore.get("uniqueDeployer",{type: "json"});
+        const storedTimestamp = await combinedStore.get("blobTimestamp", {type:"json"});
         console.log(`Stored timestamp: ${storedTimestamp}`);
 
         // const CACHE_DURATION = 1*60*1000; //1 hour
