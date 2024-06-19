@@ -14,9 +14,7 @@ export default async(request,context) => {
 
     const combinedStore = getStore(storeName);
 
-    await combinedStore.delete("data");
-    await combinedStore.delete("timestamp");
-    console.log('deleted');
+    console.log('updating ',storeName);
 
     try{
         console.log("fetching data from blockchain...")
@@ -62,7 +60,7 @@ export default async(request,context) => {
 
         // console.log('processed data: '+ JSON.stringify(processed.data,null,2));
         console.log('data set to Blob');
-        console.log(await combinedStore.list());
+        // console.log(await combinedStore.list());
     }   catch(error){
         console.log(error);
        

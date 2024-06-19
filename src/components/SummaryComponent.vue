@@ -31,7 +31,7 @@
 
       <div class="update">
         <p>Last updated: {{ timestamp }}</p> 
-        <v-icon class="refresh-icon" @click="refreshData">mdi-refresh</v-icon>
+        <v-icon v-tooltip:top="'click to update data (page will refresh soon)'" class="refresh-icon" @click="refreshData">mdi-refresh</v-icon>
       </div>
     </div>
 
