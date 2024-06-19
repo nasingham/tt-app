@@ -31,7 +31,7 @@
 
       <div class="update">
         <p>Last updated: {{ timestamp }}</p> 
-        <v-icon v-tooltip:top="'click to update data (page will refresh soon)'" class="refresh-icon" @click="refreshData">mdi-refresh</v-icon>
+        <v-icon v-tooltip:top="'click to update data (in the background)'" class="refresh-icon" @click="refreshData">mdi-refresh</v-icon>
       </div>
     </div>
 
@@ -64,20 +64,32 @@
           </template>
         </v-virtual-scroll>
       </v-card>
-      <v-card  class="unique-registries" v-if="data.uniqueDeployed">
-        <v-card-title :style="{ backgroundColor: '#4da6e8' }">Token Registries</v-card-title>
-        <v-virtual-scroll
-          class="scroller"
-          :height="300"
-          :items="data.uniqueDeployed"
-          :item-height="5"
-          :width="300"
-        >
-          <template v-slot:default="{ item }">
-            <a :href="scannerUrl + item" target="_blank">{{ item }}</a>
-          </template>
-        </v-virtual-scroll>
-      </v-card>
+    </div>
+    <div class="tables">
+      <!-- <v-card class="standard"  elevation="3"> -->
+        <!-- <v-card-title :style="{ backgroundColor: '#4da6e8' }">Token Registries (Standard)</v-card-title> -->
+      <v-expansion-panels>
+        <v-expansion-panel>
+          <v-expansion-panel-title style="background-color: #4da6e8; font-size:x-large;">Token Registries (Standard)</v-expansion-panel-title>
+          <v-expansion-panel-text>
+            <v-data-table class="v-data-table"
+            :headers="standardHeaders"
+            :items="data.returnValues"
+            :items-per-page="5"
+            >
+            
+              <template #item.deployed.deployed="{ value }">
+                  <a :href="scannerUrl + value" target="_blank" style="color:blue">
+                    {{ value }}
+                  </a>
+              </template>
+            </v-data-table>
+          </v-expansion-panel-text>
+        </v-expansion-panel>
+      </v-expansion-panels>
+        
+      <!-- </v-card> -->
+        
       <v-card  class="unique-standalones" v-if="data.uniqueStandalone">
         <v-card-title :style="{ backgroundColor: '#4da6e8' }">Standalone Token Registries</v-card-title>
         <v-virtual-scroll
@@ -111,11 +123,13 @@ export default {
     const standalones = this.data.uniqueStandalone && this.data.uniqueStandalone.length > 0 
     ? this.data.uniqueStandalone.length
     : 0;
+    const standardHeaders = [{title:'Address', key:'deployed.deployed'},{title:'No. of tokens',key:'deployed.num_tokens'}];
 
     return {
       titleDeployments,
       titleCreated,
       standalones,
+      standardHeaders,
     }
   },
   methods:{
@@ -127,6 +141,7 @@ export default {
 </script>
 
 <style scoped>
+
 .summary {
   /* padding: 20px; */
   width:100%;
@@ -160,6 +175,10 @@ export default {
   font-size: 24px;
   color:#000;
   margin-left:5px;  
+}
+.standard{
+  /* border-color: #000;
+  border-width: medium; */
 }
 .uniques {
   margin-top: 10px;

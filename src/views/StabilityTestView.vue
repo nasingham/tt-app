@@ -84,7 +84,7 @@ import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
             //     method: "POST",
             // });
             console.log(response);
-            window.location.reload();
+            
         }
 
         onMounted(()=>{
