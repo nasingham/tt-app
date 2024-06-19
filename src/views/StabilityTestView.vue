@@ -48,8 +48,8 @@ import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
 
         const fetchData = async (storeName, dataRef, timestampRef) => {
             try {
-            const response = await fetch(`http://localhost:8888/.netlify/functions/fetch?storeName=${storeName}`);
-            // const response = await fetch(`https://tradetrust-scan.netlify.app/.netlify/functions/fetch?storeName=${storeName}`);
+            // const response = await fetch(`http://localhost:8888/.netlify/functions/fetch?storeName=${storeName}`);
+            const response = await fetch(`https://tradetrust-scan.netlify.app/.netlify/functions/fetch?storeName=${storeName}`);
             if (!response.ok) {
                 throw new Error('Network response not ok');
             }
