@@ -1,10 +1,17 @@
-// const {Web3}  = require('web3');
+// const Web3 = require('web3');
+// const mysql = require('mysql2/promise');
+// require('dotenv').config();
+
 import Web3 from 'web3';
-import { processEventsTitleEscrow } from './utils';
+import mysql from 'mysql2/promise';
+import 'dotenv/config';
+import {processEventsTitleEscrow } from './utils';
+
 
 const web3 = new Web3('https://eth-sepolia.g.alchemy.com/v2/oYTceCr2171uweAFpcDci_A-434gf1Qj');
 const titleEscrowFactory = "0x5aA71Cc9559bC5e54E9504a81496d9F8454721F5"
-//ABI of Deployer
+
+// ABI of Deployer
 const contractABI = [
     {
       "inputs": [],
@@ -92,61 +99,108 @@ const contractABI = [
       "stateMutability": "view",
       "type": "function"
     }
-  ]
+  ];
 
-
-
-export default async (request,context) => {
-
-    try{  
+export const handler = async (event) => {
+    try {
         await web3.eth.net.isListening();
         console.log('title listening');
 
-    
-        const contract = new web3.eth.Contract(contractABI,titleEscrowFactory);
+        console.log('connecting to db');
+        // Insert the processed data into the MySQL database
+        const connection = await mysql.createConnection({
+            host: process.env.RDS_HOSTNAME,
+            user: process.env.RDS_USERNAME,
+            password: process.env.RDS_PASSWORD,
+            database: process.env.RDS_DATABASE
+        });
+        console.log('connected');
+
+
+        const chainId = 11155111; //sepolia networkID
+        const contract = new web3.eth.Contract(contractABI, titleEscrowFactory);
 
         function bigintReplacer(key, value) {
             return typeof value === 'bigint' ? value.toString() : value;
         }
 
-        const startBlock = 2428240; //sepolia Title creation block
-        const endBlock = Number(await web3.eth.getBlockNumber());
-        const batchSize = 500000; // Adjust this size based on your needs
-        // let currentBlock = startBlock;
-        let allEvents = [];
+        // const startBlock = 2428240; //sepolia Title creation block
+        const [rows] = await connection.query(`SELECT MAX(titleBlockNumber) as latestBlock from titleEscrowsCreated where chainId = ${chainId}`);
+        const startBlock = rows[0].latestBlock;
+        console.log('startblock', startBlock);
 
-        const getBatchEvents = async (fromBlock, toBlock) => {
-          console.log('fromblock ',fromBlock);
-          return await contract.getPastEvents('TitleEscrowCreated', {
-              fromBlock: fromBlock,
-              toBlock: toBlock,
-          });
-        };
+        // const endBlock = Number(await web3.eth.getBlockNumber());
+        // const batchSize = 500000; // Adjust this size based on your needs
+        // let allEvents = [];
 
-        const promises = [];
-        for (let currentBlock = startBlock; currentBlock <= endBlock; currentBlock += batchSize) {
-            const fromBlock = currentBlock;
-            const toBlock = Math.min(currentBlock + batchSize - 1, endBlock);
-            promises.push(getBatchEvents(fromBlock, toBlock));
-        }
+        // const getBatchEvents = async (fromBlock, toBlock) => {
+        //     console.log('fromblock ', fromBlock);
+        //     return await contract.getPastEvents('TitleEscrowCreated', {
+        //         fromBlock: fromBlock,
+        //         toBlock: toBlock,
+        //     });
+        // };
 
-        const results = await Promise.all(promises);
-        results.forEach(events => {
-            allEvents = allEvents.concat(events);
-        });
+        // const promises = [];
+        // for (let currentBlock = startBlock; currentBlock <= endBlock; currentBlock += batchSize) {
+        //     const fromBlock = currentBlock;
+        //     const toBlock = Math.min(currentBlock + batchSize - 1, endBlock);
+        //     promises.push(getBatchEvents(fromBlock, toBlock));
+        // }
 
-        const processed =  processEventsTitleEscrow(allEvents);
-        const response = JSON.stringify(processed,bigintReplacer,2);
-        return new Response(response, {
-            headers: { 'Content-Type': 'application/json',
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Headers": "Content-Type",
-            "Access-Control-Allow-Methods": "GET, POST, OPTION",
-            }
+        // const results = await Promise.all(promises);
+        // results.forEach(events => {
+        //     allEvents = allEvents.concat(events);
+        // });
+
+        const events = await contract.getPastEvents('TitleEscrowCreated',{
+          fromBlock: startBlock,
+          toBlock: 'latest',
         })
+
+        const processed = processEventsTitleEscrow(events);
+
         
-    } catch(error){
+        // const deleteQuery = 'DELETE FROM titleEscrowsCreated';
+        const insertQuery = 'INSERT IGNORE INTO titleEscrowsCreated (txnHash, chainId, titleBlockNumber, tokenRegistry, tokenId, titleEscrow, removed) VALUES ?';
+        const values = processed.titleEscrowsCreated.map(event => [
+            event.txnHash,
+            chainId,
+            event.titleBlockNumber,
+            event.tokenRegistry,
+            event.tokenId,
+            event.titleEscrow,
+            event.removed
+        ]);
+
+        // await connection.query(deleteQuery);
+        // console.log('deleted');
+        await connection.query(insertQuery, [values]);
+        console.log('inserted');
+        await connection.end();
+        console.log('ended');
+
+        const response = JSON.stringify(processed, bigintReplacer, 2);
+
+        return {
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'GET, POST, OPTION'
+            },
+            body: response
+        };
+    } catch (error) {
         console.log(error);
-        return new Response(JSON.stringify({ error: 'Failed fetching title data' }), { headers: { 'Content-Type': 'application/json',"Access-Control-Allow-Origin": "*" } });
-      };
-}   
+        return {
+            statusCode: 500,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({ error: 'Failed deployer fetching data' })
+        };
+    }
+};

@@ -1,6 +1,7 @@
-// const {Web3}  = require('web3');
 import Web3 from 'web3';
 import { processEventsDeployer } from './utils';
+import mysql from 'mysql2/promise';
+import 'dotenv/config';
 
 const web3 = new Web3("https://gtn.stabilityprotocol.com/zgt/ez9zn4ay90dz");
 const deployer = "0x163A63415d1bf6DeE66B0624e2313fB9127a599b"
@@ -115,7 +116,108 @@ const contractABI = [
 ]
 
 
+export const handler = async (event) => {
+    try {
+        await web3.eth.net.isListening();
+        console.log('deployer listening');
 
+
+        console.log('connecting to db');
+        // Insert the processed data into the MySQL database
+        const connection = await mysql.createConnection({
+            host: process.env.RDS_HOSTNAME,
+            user: process.env.RDS_USERNAME,
+            password: process.env.RDS_PASSWORD,
+            database: process.env.RDS_DATABASE
+        });
+        console.log('connected to db');
+
+
+        const chainId = 101010; //stability networkID
+        const contract = new web3.eth.Contract(contractABI, deployer);
+
+        function bigintReplacer(key, value) {
+            return typeof value === 'bigint' ? value.toString() : value;
+        }
+
+        // const startBlock = 82923; // gtn Deployer creation block
+        const [rows] = await connection.query(`SELECT MAX(deploymentBlockNumber) as latestBlock from deployments where chainId = ${chainId}`);
+        const startBlock = rows[0].latestBlock;
+        console.log('startblock', startBlock);
+        // const endBlock = Number(await web3.eth.getBlockNumber());
+        // const batchSize = 500000; // Adjust this size based on your needs
+        // let allEvents = [];
+
+        // const getBatchEvents = async (fromBlock, toBlock) => {
+        //     console.log('fromblock ', fromBlock);
+        //     return await contract.getPastEvents('Deployment', {
+        //         fromBlock: fromBlock,
+        //         toBlock: toBlock,
+        //     });
+        // };
+
+        // const promises = [];
+        // for (let currentBlock = startBlock; currentBlock <= endBlock; currentBlock += batchSize) {
+        //     const fromBlock = currentBlock;
+        //     const toBlock = Math.min(currentBlock + batchSize - 1, endBlock);
+        //     promises.push(getBatchEvents(fromBlock, toBlock));
+        // }
+
+        // const results = await Promise.all(promises);
+        // results.forEach(events => {
+        //     allEvents = allEvents.concat(events);
+        // });
+
+        const events = await contract.getPastEvents('Deployment',{
+            fromBlock: startBlock,
+            toBlock: 'latest',
+        })
+        const processed = processEventsDeployer(events);
+
+        
+        // const deleteQuery = 'DELETE FROM deployments where networkId';
+        const insertQuery = 'INSERT IGNORE INTO deployments (txnHash, chainId, deploymentBlockNumber, walletAddress, titleEscrowFactory, implementation, tokenRegistry) VALUES ?';
+        const values = processed.deployments.map(event => [
+            event.txnHash,
+            chainId,
+            event.deploymentBlockNumber,
+            event.walletAddress,
+            event.titleEscrowFactory,
+            event.implementation,
+            event.tokenRegistry
+        ]);
+        
+        // await connection.query(deleteQuery);
+        // console.log('deleted');
+        await connection.query(insertQuery, [values]);
+        console.log('inserted');
+        await connection.end();
+        console.log('ended');
+
+        const response = JSON.stringify(processed, bigintReplacer, 2);
+
+        return {
+            statusCode: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type',
+                'Access-Control-Allow-Methods': 'GET, POST, OPTION'
+            },
+            body: response
+        };
+    } catch (error) {
+        console.log(error);
+        return {
+            statusCode: 500,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            body: JSON.stringify({ error: 'Failed deployer fetching data' })
+        };
+    }
+};
 
 export default async (request,context) => {
     try{  
