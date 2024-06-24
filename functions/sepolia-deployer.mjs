@@ -71,7 +71,7 @@ export const handler = async (event) => {
         console.log('connecting to db');
         // Insert the processed data into the MySQL database
         const connection = await mysql.createConnection({
-            host: "ttscan.cn8as006wlss.ap-southeast-1.rds.amazonaws.com",
+            host: process.env.RDS_HOSTNAME,
             user: process.env.RDS_USERNAME,
             password: process.env.RDS_PASSWORD,
             database: process.env.RDS_DATABASE
