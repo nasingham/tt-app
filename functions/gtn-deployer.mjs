@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-import { processEventsDeployer } from './utils';
+import { processEventsDeployer } from './utils.js';
 import mysql from 'mysql2/promise';
 import 'dotenv/config';
 

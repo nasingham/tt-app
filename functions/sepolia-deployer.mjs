@@ -5,7 +5,7 @@
 import Web3 from 'web3';
 import mysql from 'mysql2/promise';
 import 'dotenv/config';
-import { processEventsDeployer } from './utils';
+import { processEventsDeployer } from './utils.js';
 
 
 const web3 = new Web3('https://eth-sepolia.g.alchemy.com/v2/oYTceCr2171uweAFpcDci_A-434gf1Qj');
