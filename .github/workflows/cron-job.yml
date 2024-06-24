@@ -3,7 +3,7 @@ name: Daily Cron Job
 on:
   schedule:
     # Runs at 8:15am UTC daily (4:15pm SGT)
-    - cron: '40 8 * * *'
+    - cron: '29 9 * * *'
 
 jobs:
   run-functions:
