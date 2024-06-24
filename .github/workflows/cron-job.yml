@@ -1,0 +1,74 @@
+name: Daily Cron Job
+
+on:
+  schedule:
+    # Runs at 8:15am UTC daily (4:15pm SGT)
+    - cron: '15 8 * * *'
+
+jobs:
+  run-functions:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'  # Specify the Node.js version you need
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run sepolia-deployer.mjs
+      run: node functions/sepolia-deployer.mjs
+
+    - name: Run sepolia-titleEscrow.mjs
+      run: node functions/sepolia-titleEscrow.mjs
+    
+    - name: Run eth-deployer.mjs
+      run: node functions/eth-deployer.mjs
+
+    - name: Run eth-titleEscrow.mjs
+      run: node functions/eth-titleEscrow.mjs
+      
+    - name: Run gtn-deployer.mjs
+      run: node functions/gtn-deployer.mjs
+
+    - name: Run gtn-titleEscrow.mjs
+      run: node functions/gtn-titleEscrow.mjs
+    
+    - name: Run stabilityTestnet-deployer.mjs
+      run: node functions/stabilityTestnet-deployer.mjs
+
+    - name: Run stabilityTestnet-titleEscrow.mjs
+      run: node functions/stabilityTestnet-titleEscrow.mjs
+
+    - name: Run polygon-deployer.mjs
+      run: node functions/polygon-deployer.mjs
+
+    - name: Run polygon-titleEscrow.mjs
+      run: node functions/polygon-titleEscrow.mjs
+
+    - name: Run amoy-deployer.mjs
+      run: node functions/amoy-deployer.mjs
+
+    - name: Run amoy-titleEscrow.mjs
+      run: node functions/amoy-titleEscrow.mjs
+
+    - name: Run xdc-deployer.mjs
+      run: node functions/xdc-deployer.mjs
+
+    - name: Run xdc-titleEscrow.mjs
+      run: node functions/xdc-titleEscrow.mjs
+
+    - name: Run apothem-deployer.mjs
+      run: node functions/apothem-deployer.mjs
+
+    - name: Run apothem-titleEscrow.mjs
+      run: node functions/apothem-titleEscrow.mjs
+
+    
+    
+
