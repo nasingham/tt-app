@@ -18,7 +18,13 @@ export default async (request, context) => {
         console.log('connected');
 
         // Query the deployments table
-        const [rows] = await connection.query(`SELECT * FROM deployments where chainId= ${chainId}`);
+        const [rows] = await connection.query(`select
+                                                (select count(distinct tokenRegistry) as totalDeployments from(
+                                                select tokenRegistry from deployments where chainId=${chainId}
+                                                union
+                                                select distinct tokenRegistry from titleEscrowsCreated
+                                                where chainId=${chainId}) as tokenRegistries) as totalDeployments,
+                                                (select count(*) from titleEscrowsCreated where chainId = ${chainId}) as totalEscrows`);
         console.log('fetched');
 
         await connection.end();

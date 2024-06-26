@@ -1,20 +1,20 @@
 <template>
-    <div class="tokenregistry">
-        <v-card >
+    <div class="tokenregistry" v-if="address">
+        <v-card>
             <div class="header">
                 <v-card-title>
-                    <a style="color:black" :href="scannerUrl + registry.deployed.deployed" target="_blank">{{ registry.deployed.deployed }}</a>
+                    <a style="color:black" :href="scannerUrl + address" target="_blank">{{ address}}</a>
                 </v-card-title>
                 <v-card-subtitle>
-                    <a style="color:black" :href="scannerUrl + registry.titleEscrowFactory" target="_blank">{{ registry.titleEscrowFactory }}</a>
+                    <!-- <a style="color:black" :href="scannerUrl + registry.titleEscrowFactory" target="_blank">{{ registry.titleEscrowFactory }}</a> -->
                 </v-card-subtitle>
             </div>
             <v-divider></v-divider>
-            <div class="content">
+            <div class="content" v-if="content">
                 
                 <v-virtual-scroll
                     :height="200"
-                    :items="registry.deployed.contents"
+                    :items="content"
                     :item-height="8"
                     :width="200"
                     >
@@ -43,13 +43,50 @@
 
 
 <script>
+import { fetchData } from '@/utils';
+import { ref, watch, onMounted } from 'vue';
 
 export default{
+
     name: 'TokenRegistryComponent',
     props: {
-        registry: Object,
+        data: String,
+        chainId: Number,
         scannerUrl:String,
     },
+    data(){
+        const address = this.data; 
+        console.log('address',address);
+        const content = ref(null);
+
+        const params = {
+            chainId: this.chainId,
+            address: address,
+        }
+
+        const getTokenRegistry = async () => {
+            console.log('fetching tokenRegistry');
+            content.value = await fetchData('tokenRegistry', params)
+            console.log(content.value);
+
+        }
+
+        getTokenRegistry();
+        // watch(()=> this.data, (newAddress) => {
+        //     address.value = newAddress;
+        //     params.address = newAddress;
+        //     getTokenRegistry();
+        // })
+
+        return{
+            address,
+            content,
+            getTokenRegistry,
+
+        }
+
+    }
+
     
     
 }

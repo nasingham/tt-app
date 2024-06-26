@@ -6,37 +6,37 @@
         elevation="3"
         >
           <v-card-title class="big-title">Deployments</v-card-title>
-          <v-card-text class ="big-text">{{titleDeployments}}</v-card-text>
+          <v-card-text class ="big-text">{{ titleDeployments }}</v-card-text>
         </v-card>
         <v-card
         
         elevation="3"
         >
           <v-card-title class="big-title">Title Escrows Created</v-card-title>
-          <v-card-text class ="big-text">{{titleCreated}}</v-card-text>
+          <v-card-text class ="big-text">{{ titleCreated }}</v-card-text>
         </v-card>
-        <v-card v-if="data.uniqueStandalone"     
+        <!-- <v-card v-if="data.uniqueStandalone"     
         elevation="3"
-        >
+        > -->
           
-          <v-card-title class="big-title">
+          <!-- <v-card-title class="big-title">
             Standalones
             <v-icon class="info-icon" size="x-small" v-tooltip:end="'Number of registries that used the Title Escrow Factory without the Deployer'">mdi-information</v-icon>
           </v-card-title>
           <v-card-text class ="big-text">{{standalones}}</v-card-text>
-        </v-card>
+        </v-card> -->
 
       </div>
 
 
-      <div class="update">
+      <!-- <div class="update">
         <p>Last updated: {{ timestamp }}</p> 
         <v-icon v-tooltip:top="'click to update data (in the background)'" class="refresh-icon" @click="refreshData">mdi-refresh</v-icon>
-      </div>
+      </div> -->
     </div>
 
 
-    <div class="uniques">
+    <!-- <div class="uniques">
       <v-card  class="unique-deployers">
         <v-card-title :style="{ backgroundColor: '#4da6e8' }">Wallet Addresses</v-card-title>
         <v-virtual-scroll
@@ -64,33 +64,10 @@
           </template>
         </v-virtual-scroll>
       </v-card>
-    </div>
-    <div class="tables">
-      <!-- <v-card class="standard"  elevation="3"> -->
-        <!-- <v-card-title :style="{ backgroundColor: '#4da6e8' }">Token Registries (Standard)</v-card-title> -->
-      <v-expansion-panels>
-        <v-expansion-panel>
-          <v-expansion-panel-title style="background-color: #4da6e8; font-size:x-large;">Token Registries (Standard)</v-expansion-panel-title>
-          <v-expansion-panel-text>
-            <v-data-table class="v-data-table"
-            :headers="standardHeaders"
-            :items="data.returnValues"
-            :items-per-page="5"
-            >
-            
-              <template #item.deployed.deployed="{ value }">
-                  <a :href="scannerUrl + value" target="_blank" style="color:blue">
-                    {{ value }}
-                  </a>
-              </template>
-            </v-data-table>
-          </v-expansion-panel-text>
-        </v-expansion-panel>
-      </v-expansion-panels>
+    </div> -->
+      
         
-      <!-- </v-card> -->
-        
-      <v-card  class="unique-standalones" v-if="data.uniqueStandalone">
+      <!-- <v-card  class="unique-standalones" v-if="data.uniqueStandalone">
         <v-card-title :style="{ backgroundColor: '#4da6e8' }">Standalone Token Registries</v-card-title>
         <v-virtual-scroll
           class="scroller"
@@ -103,8 +80,8 @@
             <a :href="scannerUrl + item" target="_blank">{{ item }}</a>
           </template>
         </v-virtual-scroll>
-      </v-card>
-    </div>
+      </v-card> -->
+    <!-- </div> -->
   </div>
 </template>
 
@@ -113,29 +90,26 @@ export default {
   name: 'SummaryComponent',
   props: {
     data: Object,
-    timestamp: String,
-    scannerUrl:String,
-    refresh:Function,
+    // timestamp: String,
+    // scannerUrl:String,
+    // refresh:Function,
   },
   data(){
-    const titleDeployments = this.data.numDeployments;
-    const titleCreated = this.data.numCreated;
-    const standalones = this.data.uniqueStandalone && this.data.uniqueStandalone.length > 0 
-    ? this.data.uniqueStandalone.length
-    : 0;
-    const standardHeaders = [{title:'Address', key:'deployed.deployed'},{title:'No. of tokens',key:'deployed.num_tokens'}];
+    // console.log(this.data);
+    const titleDeployments = this.data[0].totalDeployments;
+    const titleCreated = this.data[0].totalEscrows;
+    // const standalones = this.data.uniqueStandalone && this.data.uniqueStandalone.length > 0 
+    // ? this.data.uniqueStandalone.length
+    // : 0;
 
     return {
       titleDeployments,
       titleCreated,
-      standalones,
-      standardHeaders,
+      // standalones,
+      // standardHeaders,
     }
   },
   methods:{
-    refreshData() {
-      this.refresh();
-    }
   }
 };
 </script>

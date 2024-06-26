@@ -18,7 +18,16 @@ export default async (request, context) => {
         console.log('connected');
 
         // Query the deployments table
-        const [rows] = await connection.query(`SELECT * FROM deployments where chainId= ${chainId}`);
+        const [rows] = await connection.query(`select d.tokenRegistry, 0 as num_tokens, 0 as standalone 
+                                                from deployments d left join titleEscrowsCreated t 
+                                                on t.tokenRegistry = d.tokenRegistry 
+                                                where t.tokenRegistry IS NULL and d.chainId = ${chainId}
+                                                union all
+                                                select distinct t.tokenRegistry, count(t.txnHash) as num_tokens,
+                                                case when d.tokenRegistry IS NULL then 1 else 0 end as standalone
+                                                from titleEscrowsCreated t left join deployments d 
+                                                on t.tokenRegistry = d.tokenRegistry 
+                                                where t.chainId=${chainId} group by t.tokenRegistry `);
         console.log('fetched');
 
         await connection.end();

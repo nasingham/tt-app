@@ -1,25 +1,31 @@
 <template>
-    <div class="xdc">
+    <div class="xdc d-flex flex-column">
         <div>
             <SummaryComponent
-                v-if="xdcData"
-                :data="xdcData"
-                :timestamp="xdcTimestamp"
-                scannerUrl="https://xdc.blocksscan.io/address/"
-                :refresh = "updateData"
-                class="summary"
+              v-if="totals"
+              :data="totals"
+              class="summary"
             />
         </div>
-        <div v-if="xdcData" class="tokenRegistry">
-            <v-sheet max-width="1300">
+        <div>
+            <DeploymentComponent v-if="uniqueDeployments"
+             :data="uniqueDeployments" 
+             scannerUrl="https://xdc.blocksscan.io/address/"
+             :chainId="chainId"
+             @generate="handleSelection"
+             />
+        </div>
+        <div v-if="selection" class="tokenRegistry">
+            <v-sheet max-width="1000">
                 <v-slide-group
                 class="vsg-1"
                 show-arrows>
                     <v-slide-group-item>
                         <TokenRegistryComponent 
-                            v-for="(registry, index) in xdcData.returnValues"
+                            v-for="(registry, index) in selection"
                             :key="index"
-                            :registry="registry"
+                            :data="registry.tokenRegistry"
+                            :chainId="chainId"
                             scannerUrl="https://xdc.blocksscan.io/address/"
                         />
                     </v-slide-group-item>
@@ -31,8 +37,10 @@
   
   <script>
 import SummaryComponent from '@/components/SummaryComponent.vue';
-import { ref, onMounted } from 'vue';
 import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
+import DeploymentComponent from '@/components/DeploymentComponent.vue';
+import { ref, onMounted } from 'vue';
+import { fetchData } from '@/utils';
   
   export default {
 
@@ -40,63 +48,50 @@ import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
     components: {
         SummaryComponent,
         TokenRegistryComponent,
+        DeploymentComponent,
     },
     data(){
-        const xdcData = ref(null);
-        const xdcTimestamp = ref(null);
-        const storeName = "xdc";
+        const uniqueDeployments = ref(null);
+        const totalDeployments = ref(0);
+        const sepoliaTimestamp = ref(null);
+        const chainId = 50;
+        const totals = ref(null);
+        const selection = ref(null);
 
-        const fetchData = async (storeName, dataRef, timestampRef) => {
-            try {
-            // const response = await fetch(`http://localhost:9999/.netlify/functions/fetch?storeName=${storeName}`);
-            const response = await fetch(`https://tradetrust-scan.netlify.app/.netlify/functions/fetch?storeName=${storeName}`);
-            if (!response.ok) {
-                throw new Error('Network response not ok');
-            }
-            const result = await response.json();
-            // console.log('result');
-            // console.log(result);
-            dataRef.value = result.data;  
-            // console.log(typeof result.timestamp);
-            timestampRef.value = (new Date((parseInt(result.timestamp)))).toLocaleString();
-            // console.log('fetch data time  ' + timestampRef.value);
-            } catch (err) {
-            console.log(err);
-            error.value = err.toString();
-            }
+        const getTotals = async() => {
+            totals.value = await fetchData('totalsByChain', {chainId:chainId});
+            // console.log(result[0].totalDeployments);
+        }
+
+        const getUniqueDeployments = async () => {
+            console.log('fetching xdc uniqueDeployments')
+            uniqueDeployments.value = await fetchData('uniqueDeployments',{chainId:chainId});
+            // totalDeployments.value = Object.keys(uniqueDeployments.value).length;
+
         };
 
-        const getXdc = () => {
-            console.log('fetching xdc')
-            fetchData(
-                storeName,
-                xdcData,
-                xdcTimestamp
-                );
-            // console.log(stabilityTimestamp);
-        };
-
-        const updateData = async () =>{
-            console.log('updating');
-            const response = await fetch(`https://tradetrust-scan.netlify.app/.netlify/functions/update-background?storeName=${storeName}`, {
-                method: "POST",
-            });
-            // const response = await fetch(`http://localhost:8888/.netlify/functions/update-background?storeName=${storeName}`, {
-            //     method: "POST",
-            // });
-            console.log(response);
+        const handleSelection = (selected) => {
+            selection.value = selected;
+            console.log('prop',selection.value);
         }
 
         onMounted(()=>{
-            getXdc();
+            getTotals();
+            getUniqueDeployments();
         })
 
         return{
-            xdcData,
-            xdcTimestamp,
-            getXdc,
+            // sepoliaData,
+            uniqueDeployments,
+            totalDeployments,
+            sepoliaTimestamp,
+            selection,
+            chainId,
+            getUniqueDeployments,
             fetchData,
-            updateData,
+            handleSelection,
+            totals,
+            
         }
     }
 
@@ -106,15 +101,18 @@ import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
   
   <style scoped>
   /* Add your styles here if needed */
-.xdc {
+    .xdc {
     display: flex;
     flex-direction: column;
     padding: 20px; /* Optional: Add padding for better spacing */
-}
-.summary {
-  margin-bottom: 20px; /* Add some margin to create space between summary and tokenRegistry */
-}
+    }
+    .summary {
+    margin-bottom: 20px; /* Add some margin to create space between summary and tokenRegistry */
+    }
 
   
   </style>
+  
+  
+
   

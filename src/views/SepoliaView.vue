@@ -2,24 +2,30 @@
     <div class="sepolia d-flex flex-column">
         <div>
             <SummaryComponent
-              v-if="sepoliaData"
-              :data="sepoliaData"
-              :timestamp="sepoliaTimestamp"
-              scannerUrl="https://sepolia.etherscan.io/address/"
-              :refresh = "updateData"
+              v-if="totals"
+              :data="totals"
               class="summary"
             />
         </div>
-        <div v-if="sepoliaData" class="tokenRegistry">
+        <div>
+            <DeploymentComponent v-if="uniqueDeployments"
+             :data="uniqueDeployments" 
+             scannerUrl="https://sepolia.etherscan.io/address/"
+             :chainId="chainId"
+             @generate="handleSelection"
+             />
+        </div>
+        <div v-if="selection" class="tokenRegistry">
             <v-sheet max-width="1000">
                 <v-slide-group
                 class="vsg-1"
                 show-arrows>
                     <v-slide-group-item>
                         <TokenRegistryComponent 
-                            v-for="(registry, index) in sepoliaData.returnValues"
+                            v-for="(registry, index) in selection"
                             :key="index"
-                            :registry="registry"
+                            :data="registry.tokenRegistry"
+                            :chainId="chainId"
                             scannerUrl="https://sepolia.etherscan.io/address/"
                         />
                     </v-slide-group-item>
@@ -32,7 +38,9 @@
   <script>
 import SummaryComponent from '@/components/SummaryComponent.vue';
 import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
+import DeploymentComponent from '@/components/DeploymentComponent.vue';
 import { ref, onMounted } from 'vue';
+import { fetchData } from '@/utils';
   
   export default {
 
@@ -40,64 +48,50 @@ import { ref, onMounted } from 'vue';
     components: {
         SummaryComponent,
         TokenRegistryComponent,
+        DeploymentComponent,
     },
     data(){
-        const sepoliaData = ref(null);
+        const uniqueDeployments = ref(null);
+        const totalDeployments = ref(0);
         const sepoliaTimestamp = ref(null);
-        const storeName = "sepolia";
+        const chainId = 11155111;
+        const totals = ref(null);
+        const selection = ref(null);
 
-        const fetchData = async (storeName, dataRef, timestampRef) => {
-            try {
-            // const response = await fetch(`http://localhost:9999/.netlify/functions/fetch?storeName=${storeName}`);
-            const response = await fetch(`https://tradetrust-scan.netlify.app/.netlify/functions/fetch?storeName=${storeName}`);
-            if (!response.ok) {
-                throw new Error('Network response not ok');
-            }
-            const result = await response.json();
-            // console.log('result');
-            // console.log(result);
-            dataRef.value = result.data;  
-            // console.log(typeof result.timestamp);
-            timestampRef.value = (new Date((parseInt(result.timestamp)))).toLocaleString();
-            // console.log('fetch data time  ' + timestampRef.value);
-            } catch (err) {
-            console.log(err);
-            error.value = err.toString();
-            }
+        const getTotals = async() => {
+            totals.value = await fetchData('totalsByChain', {chainId:chainId});
+            // console.log(result[0].totalDeployments);
+        }
+
+        const getUniqueDeployments = async () => {
+            console.log('fetching sepolia uniqueDeployments')
+            uniqueDeployments.value = await fetchData('uniqueDeployments',{chainId:chainId});
+            // totalDeployments.value = Object.keys(uniqueDeployments.value).length;
+
         };
 
-        const getSepolia = () => {
-            console.log('fetching sepolia')
-            fetchData(
-                storeName,
-                sepoliaData,
-                sepoliaTimestamp
-                );
-            // console.log(sepoliaTimestamp);
-        };
-
-        const updateData = async () =>{
-            console.log('updating');
-            const response = await fetch(`https://tradetrust-scan.netlify.app/.netlify/functions/update-background?storeName=${storeName}`, {
-                method: "POST",
-            });
-            // const response = await fetch(`http://localhost:8888/.netlify/functions/update-background?storeName=${storeName}`, {
-            //     method: "POST",
-            // });
-            console.log(response);
+        const handleSelection = (selected) => {
+            selection.value = selected;
+            console.log('prop',selection.value);
         }
 
         onMounted(()=>{
-            getSepolia();
-            console.log({output:sepoliaData});
+            getTotals();
+            getUniqueDeployments();
         })
 
         return{
-            sepoliaData,
+            // sepoliaData,
+            uniqueDeployments,
+            totalDeployments,
             sepoliaTimestamp,
-            getSepolia,
+            selection,
+            chainId,
+            getUniqueDeployments,
             fetchData,
-            updateData,
+            handleSelection,
+            totals,
+            
         }
     }
 
@@ -107,14 +101,14 @@ import { ref, onMounted } from 'vue';
   
   <style scoped>
   /* Add your styles here if needed */
-.sepolia {
-  display: flex;
-  flex-direction: column;
-  padding: 20px; /* Optional: Add padding for better spacing */
-}
-.summary {
-  margin-bottom: 20px; /* Add some margin to create space between summary and tokenRegistry */
-}
+    .sepolia {
+    display: flex;
+    flex-direction: column;
+    padding: 20px; /* Optional: Add padding for better spacing */
+    }
+    .summary {
+    margin-bottom: 20px; /* Add some margin to create space between summary and tokenRegistry */
+    }
 
   
   </style>

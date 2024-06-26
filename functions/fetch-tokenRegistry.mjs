@@ -5,7 +5,11 @@ export default async (request, context) => {
 
     const url = new URL(request.url);
     const params = url.searchParams;
+    const address = params.get('address');
+    console.log(address);
+    
     const chainId = params.get('chainId');
+    console.log(chainId);
     try {
         console.log('connecting to db');
         // Connect to the MySQL database
@@ -18,7 +22,7 @@ export default async (request, context) => {
         console.log('connected');
 
         // Query the deployments table
-        const [rows] = await connection.query(`SELECT * FROM deployments where chainId= ${chainId}`);
+        const [rows] = await connection.query(`select * from titleEscrowsCreated where tokenRegistry = '${address}' and chainId = ${chainId}`);
         console.log('fetched');
 
         await connection.end();
