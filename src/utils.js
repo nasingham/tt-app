@@ -16,7 +16,16 @@ export async function fetchData(fields, params) {
       }
   
       const result = await response.json();
-      return result;
+      return new Response (result, {
+        status: 200,
+        headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTION'
+        },
+    });
+      // return result;
     } catch (err) {
       console.log(err);
     }
