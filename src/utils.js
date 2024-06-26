@@ -2,7 +2,7 @@ export async function fetchData(fields, params) {
     try {
       // Construct the base URL
       // const baseUrl = `http://localhost:9999/.netlify/functions/fetch-${fields}`;
-      const baseUrl = `https://tradetrust-app.netlify.app/.netlify/functions/fetch-${fields}`;
+      const baseUrl = `https://tradetrust-scan.netlify.app/.netlify/functions/fetch-${fields}`;
   
       // Create URLSearchParams from the params object
       const urlParams = new URLSearchParams(params);
@@ -16,16 +16,16 @@ export async function fetchData(fields, params) {
       }
   
       const result = await response.json();
-      return new Response (result, {
-        status: 200,
-        headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Content-Type',
-            'Access-Control-Allow-Methods': 'GET, POST, OPTION'
-        },
-    });
-      // return result;
+    //   return new Response (result, {
+    //     status: 200,
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //         'Access-Control-Allow-Origin': '*',
+    //         'Access-Control-Allow-Headers': 'Content-Type',
+    //         'Access-Control-Allow-Methods': 'GET, POST, OPTION'
+    //     },
+    // });
+      return result;
     } catch (err) {
       console.log(err);
     }
