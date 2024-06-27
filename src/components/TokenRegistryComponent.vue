@@ -1,9 +1,11 @@
 <template>
-    <div class="tokenregistry" v-if="address">
+    <div class="tokenregistry" v-if="address && content">
         <v-card>
             <div class="header">
                 <v-card-title>
-                    <a style="color:black" :href="scannerUrl + address" target="_blank">{{ address}}</a>
+                    <p style="font-size:small;">Registry Address</p>
+                    <a style="color:black" :href="scannerUrl + address" target="_blank">{{ address.slice(0, 10) + '...'}}</a>
+                    <p style="font-size:x-small">tokens: {{ content.length }}</p>
                 </v-card-title>
                 <v-card-subtitle>
                     <!-- <a style="color:black" :href="scannerUrl + registry.titleEscrowFactory" target="_blank">{{ registry.titleEscrowFactory }}</a> -->
@@ -11,7 +13,10 @@
             </div>
             <v-divider></v-divider>
             <div class="content" v-if="content">
-                
+                <div class="item">
+                    <p>merkle root</p>
+                    <p>titleEscrow</p>
+                </div>
                 <v-virtual-scroll
                     :height="200"
                     :items="content"
@@ -105,6 +110,11 @@ export default{
 
 .tokenregistry .header{
     background-color: #3aaf86;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 /* .tokenregistry .v-card{

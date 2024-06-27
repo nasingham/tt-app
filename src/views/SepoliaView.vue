@@ -16,7 +16,7 @@
              />
         </div>
         <div v-if="selection" class="tokenRegistry">
-            <v-sheet max-width="1000">
+            <v-sheet>
                 <v-slide-group
                 class="vsg-1"
                 show-arrows>
@@ -109,7 +109,5 @@ import { fetchData } from '@/utils';
     .summary {
     margin-bottom: 20px; /* Add some margin to create space between summary and tokenRegistry */
     }
-
-  
   </style>
   

@@ -1,9 +1,7 @@
 <template>
     <div class="tables" v-if="deployments">
-        <v-expansion-panels>
-          <v-expansion-panel>
-            <v-expansion-panel-title style="background-color: #4da6e8; font-size:x-large; font-weight: bold;">Token Registries</v-expansion-panel-title>
-            <v-expansion-panel-text >
+      <v-card>
+        <v-card-title style="background-color: #4da6e8; font-size:x-large;">Token Registries </v-card-title>
               <div class="buttons">
                 <v-chip-group
                   v-model="deploymentType"
@@ -13,13 +11,15 @@
                   <v-chip
                     :text="`Standard: ${num_standard}`"
                     value="standard"
-                    variant="outlined"
+                    variant="tonal"
                     filter
+                    
+
                   ></v-chip>
                   <v-chip
                     :text="`Standalone: ${num_standalone}`"
                     value="standalone"
-                    variant="outlined"
+                    variant="tonal"
                     filter
                   ></v-chip>
                 </v-chip-group>
@@ -40,6 +40,7 @@
               :items="filteredDeployments"
               :items-per-page="5"
               :search="search"
+              v-model:sort-by="sortBy"
               multi-sort
               return-object
               show-select
@@ -54,10 +55,7 @@
                   <p style="font-size: larger;">{{ value }}</p>
                 </template>
               </v-data-table>
-
-            </v-expansion-panel-text>
-          </v-expansion-panel>
-        </v-expansion-panels>
+      </v-card>
     </div>
 </template>
 
@@ -92,7 +90,8 @@ export default{
         num_standalone,
         num_standard,
         deploymentType,
-        selected
+        selected,
+        sortBy: [{ key: 'num_tokens', order: 'desc' }],
         
       }
       
@@ -124,7 +123,12 @@ export default{
 
 </script>
 
-<style>
+<style scoped>
+
+.buttons{
+  margin-left:10px;
+}
+
 
 
 
