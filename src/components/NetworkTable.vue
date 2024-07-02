@@ -1,13 +1,9 @@
 <template>
-  <v-card rounded="lg" width="30vw">
+  <v-card rounded="lg">
     <v-card-title style="background-color: #4da6e8;">Supported Networks</v-card-title>
     <v-data-table class="v-data-table"
-      v-model="selected"
       :headers="headers"
       :items="data"
-      
-      return-object
-      show-select
       hide-default-footer
       >
       

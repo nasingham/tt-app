@@ -1,17 +1,14 @@
 <template>
     <div class="Bar">
         <v-card v-if="totals" elevation="3" rounded="lg">
-            <v-card-title style="background-color: #4da6e8;" class="justify-center">Deployments and Title Escrows by Network</v-card-title>
-            <div class="chips">
-                <v-chip-group column>
-                    <ToggleChips value1="testnet" value2="mainnet" text1="Testnet" text2="Mainnet" color1="blue" color2="green" @toggled="handleNetworks"/>
-                    <ToggleChips value1="deployments" value2="titles" text1="Deployments" text2="TitleEscrowsCreated" color1="orange" color2="yellow" @toggled="handleFilter"/>
-                </v-chip-group>
+            <v-card-title style="background-color: #4da6e8;" class="justify-center">Total Token Registries and Tokens Created by Network</v-card-title>
+            <div class="chart">
+                <Bar
+                    :options="chartOptions"
+                    :data="chartData">
+                </Bar>
             </div>
-            <Bar
-            :options="chartOptions"
-            :data="chartData">
-            </Bar>
+            
             
         </v-card>
 
@@ -28,7 +25,7 @@
 
 
 <script>
-import { computed, ref, watchEffect } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { Bar } from 'vue-chartjs';
 import {
   Chart as ChartJS,
@@ -52,118 +49,131 @@ export default{
     },
     props:{
         data : Object,
-        network : Array,
+        selectedNetwork : Array,
+        dataset : Array,
     },
-    data(){
+    setup(props){
 
-        const chosenNetwork = ref(null);
+        const chartData = ref(null);
 
-        
 
-        const totals = this.data;
-
-        console.log('totals',totals);
-
-        const networks = ref(null);
-        const filter = ref(null);
-        const showDeployments = ref(true);
-        const showTitles = ref(true);
+        const totals = props.data;
+        if (!totals) {
+            chartData.value = {
+                labels: [],
+                datasets: [],
+            };
+        }
 
         const chartOptions = {
             responsive: true,
+            aspectRatio:2,
             plugins: {
                 legend: {
                     display: true,
                     position: 'bottom',
                 },
             },
+            scales: {
+                y: {
+                ticks: {
+                    color: "#b6baca",
+                },
+                grid: {
+                    drawTicks: false,
+                },
+                border: {
+                    dash: [5, 10],
+                },
+                },
+                x: {
+                ticks: {
+                    color: "#89969f",
+                },
+                grid: {
+                    display: false,
+                },
+                border: {
+                    display: false,
+                },
+                },
+            },
         };
 
-        
+        const updateChartData = () => {
+            // Update chartData based on the new props
+            console.log('updating BarChart');
+            chartData.value = processChartData(props.selectedNetwork, props.dataset);
+        };
 
-        watchEffect(()=>{
-            chosenNetwork.value = this.network;
-            console.log('update' , chosenNetwork.value)
-        })
+        watch(
+            () => [props.selectedNetwork, props.dataset],
+            updateChartData,
+            { immediate: true }
+        );
+        onMounted(() => {
+            updateChartData();
+        });
 
-        
-        const handleNetworks = (showNetworks) => {
-             networks.value = showNetworks;
-        }
-        const handleFilter = (filtered) => {
-            filter.value=filtered;
-            console.log('filters', filter.value)
-            if (filter.value){
-            showDeployments.value = filter.value.includes('deployments');
-            console.log('showD',showDeployments.value);
-            showTitles.value = filter.value.includes('titles');
-            }
-        }
-
-
-        const chartData = computed(() => {
-            if (!totals) {
-                return {
-                labels: [],
-                datasets: [],
-                };
-            }
-
-            // Filter totals based on selected networks
+        function processChartData(selectedNetwork, dataset) {
             let filteredTotals = totals;
-            if (networks.value && networks.value.length > 0) {
-                filteredTotals = filteredTotals.filter(item => networks.value.includes(item.network_type));
-            }
-            if (chosenNetwork.value){
-                filteredTotals = filteredTotals.filter(item => chosenNetwork.value.includes(item.chainId));
+            const processedData = [];
+            const showDeployments = ref(true);
+            const showTitles = ref(true);
+
+            if(selectedNetwork && selectedNetwork.length >0){
+                // console.log('selected',selectedNetwork);
+                filteredTotals = filteredTotals.filter(item => selectedNetwork.includes(item.chainId))
             }
 
-            const datasets = [];
-            
+            if (dataset){
+                // console.log('dataset',dataset);
+                showDeployments.value = dataset.includes('Token Registries Created');
+                // console.log('showD',showDeployments.value);
+                showTitles.value = dataset.includes('Tokens Created');
+                // console.log('showT',showTitles.value);
+            }
 
             if (showDeployments.value) {
-                datasets.push({
-                label: 'Total Deployments',
+                processedData.push({
+                label: 'Token Registry Created',
                 backgroundColor: '#FF8200',
                 data: filteredTotals.map(item => item.total_deployments),
                 });
             }
 
             if (showTitles.value) {
-                datasets.push({
-                label: 'Total Title Escrows Created',
+                processedData.push({
+                label: 'Tokens Created',
                 backgroundColor: '#FDC53F',
                 data: filteredTotals.map(item => item.total_titleEscrowsCreated),
                 });
             }
             if (!showDeployments.value && !showTitles.value){
-                datasets.push({
-                label: 'Total Title Escrows Created',
+                processedData.push(
+                {
+                label: 'Tokens Created',
                 backgroundColor: '#FDC53F',
                 data: filteredTotals.map(item => item.total_titleEscrowsCreated),
                 },
                 {
-                label: 'Total Deployments',
+                label: 'Token Registry Created',
                 backgroundColor: '#FF8200',
                 data: filteredTotals.map(item => item.total_deployments),
                 }
             );
-
             }
 
             return {
                 labels: filteredTotals.map(item => item.networkName),
-                datasets: datasets,
+                datasets: processedData,
             };
-        });
-
+        }
+        
         return{
             chartOptions,
             chartData,
             totals,
-            networks,
-            handleNetworks,
-            handleFilter,
         }
 
     }
@@ -180,6 +190,10 @@ export default{
 .chips{
     display: flex;
     justify-content: center;
+}
+.chart{
+    display:flex;
+    flex-direction: row;
 }
 
 
