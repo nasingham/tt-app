@@ -1,14 +1,16 @@
 <template>
     <div class="Bar">
-        <v-card v-if="totals" elevation="3" rounded="lg">
+        <v-card elevation="3" rounded="lg">
             <v-card-title style="background-color: #4da6e8;" class="justify-center">Total Token Registries and Tokens Created by Network</v-card-title>
-            <div class="chart">
-                <Bar
-                    :options="chartOptions"
-                    :data="chartData">
-                </Bar>
-            </div>
-            
+                <v-skeleton-loader
+                    :loading="loading"
+                    type="card"
+                >
+                    <Bar v-if="chartData"
+                        :options="chartOptions"
+                        :data="chartData">
+                    </Bar>
+                </v-skeleton-loader>
             
         </v-card>
 
@@ -27,6 +29,7 @@
 <script>
 import { onMounted, ref, watch } from 'vue';
 import { Bar } from 'vue-chartjs';
+import { fetchData } from '@/utils';
 import {
   Chart as ChartJS,
   Title,
@@ -45,24 +48,85 @@ export default{
     name: 'BarChart',
     components:{
         Bar,
-        ToggleChips,
     },
     props:{
-        data : Object,
         selectedNetwork : Array,
         dataset : Array,
     },
     setup(props){
 
         const chartData = ref(null);
+        
+        const totals = ref(null);
 
+        const filteredTotals = ref([]);
 
-        const totals = props.data;
-        if (!totals) {
-            chartData.value = {
-                labels: [],
-                datasets: [],
-            };
+        const loading = ref(true);
+
+        async function getTotals(){
+            loading.value=true;
+            console.log('getting totals');
+            totals.value = await fetchData('totals');
+            if (totals.value){
+                filteredTotals.value = totals.value;
+                // console.log('filteredTotals',filteredTotals.value);
+                const processedData = [];
+                const showDeployments = ref(true);
+                const showTitles = ref(true);
+                const networks = props.selectedNetwork.length ? props.selectedNetwork : [1, 50, 51, 137, 80002, 101010, 11155111, 20180427];
+                // console.log('networks',networks);
+                filteredTotals.value = filteredTotals.value.filter(item => networks.includes(item.chainId));
+                // console.log('filteredTotals',filteredTotals.value);    
+                if (props.dataset){
+                    // console.log('dataset',dataset);
+                    showDeployments.value = props.dataset.includes('Token Registries Created');
+                    // console.log('showD',showDeployments.value);
+                    showTitles.value = props.dataset.includes('Tokens Created');
+                    // console.log('showT',showTitles.value);
+                }
+                if (showDeployments.value) {
+                    processedData.push({
+                        label: 'Token Registry Created',
+                        backgroundColor: '#FF8200',
+                        data: filteredTotals.value.map(item => item.total_deployments),
+                    });
+                    // console.log('datapushed',filteredTotals.value.map(item => item.total_deployments) );
+
+                }
+
+                if (showTitles.value) {
+                    processedData.push({
+                    label: 'Tokens Created',
+                    backgroundColor: '#FDC53F',
+                    data: filteredTotals.value.map(item => item.total_titleEscrowsCreated),
+                    });
+                }
+                if (!showDeployments.value && !showTitles.value){
+                    processedData.push(
+                    {
+                    label: 'Tokens Created',
+                    backgroundColor: '#FDC53F',
+                    data: filteredTotals.value.map(item => item.total_titleEscrowsCreated),
+                    },
+                    {
+                    label: 'Token Registry Created',
+                    backgroundColor: '#FF8200',
+                    data: filteredTotals.value.map(item => item.total_deployments),
+                    }
+                );
+                }
+                chartData.value = {
+                    labels : filteredTotals.value.map(item => item.networkName),
+                    datasets: processedData
+                };
+                
+            }else{
+                chartData.value = {
+                    labels: [],
+                    datasets: [],
+                };
+            }
+            loading.value = false;
         }
 
         const chartOptions = {
@@ -100,80 +164,33 @@ export default{
             },
         };
 
-        const updateChartData = () => {
-            // Update chartData based on the new props
-            console.log('updating BarChart');
-            chartData.value = processChartData(props.selectedNetwork, props.dataset);
-        };
 
         watch(
-            () => [props.selectedNetwork, props.dataset],
-            updateChartData,
+            () => props.selectedNetwork,
+            () => {
+                getTotals();
+            },
             { immediate: true }
         );
+        watch(
+            () => props.dataset,
+            () => {
+                getTotals();
+            },
+            { immediate: true }
+        );
+
+
         onMounted(() => {
-            updateChartData();
+            getTotals();
         });
 
-        function processChartData(selectedNetwork, dataset) {
-            let filteredTotals = totals;
-            const processedData = [];
-            const showDeployments = ref(true);
-            const showTitles = ref(true);
-
-            if(selectedNetwork && selectedNetwork.length >0){
-                // console.log('selected',selectedNetwork);
-                filteredTotals = filteredTotals.filter(item => selectedNetwork.includes(item.chainId))
-            }
-
-            if (dataset){
-                // console.log('dataset',dataset);
-                showDeployments.value = dataset.includes('Token Registries Created');
-                // console.log('showD',showDeployments.value);
-                showTitles.value = dataset.includes('Tokens Created');
-                // console.log('showT',showTitles.value);
-            }
-
-            if (showDeployments.value) {
-                processedData.push({
-                label: 'Token Registry Created',
-                backgroundColor: '#FF8200',
-                data: filteredTotals.map(item => item.total_deployments),
-                });
-            }
-
-            if (showTitles.value) {
-                processedData.push({
-                label: 'Tokens Created',
-                backgroundColor: '#FDC53F',
-                data: filteredTotals.map(item => item.total_titleEscrowsCreated),
-                });
-            }
-            if (!showDeployments.value && !showTitles.value){
-                processedData.push(
-                {
-                label: 'Tokens Created',
-                backgroundColor: '#FDC53F',
-                data: filteredTotals.map(item => item.total_titleEscrowsCreated),
-                },
-                {
-                label: 'Token Registry Created',
-                backgroundColor: '#FF8200',
-                data: filteredTotals.map(item => item.total_deployments),
-                }
-            );
-            }
-
-            return {
-                labels: filteredTotals.map(item => item.networkName),
-                datasets: processedData,
-            };
-        }
         
         return{
             chartOptions,
             chartData,
             totals,
+            loading,
         }
 
     }
@@ -191,10 +208,10 @@ export default{
     display: flex;
     justify-content: center;
 }
-.chart{
+/* .chart{
     display:flex;
     flex-direction: row;
-}
+} */
 
 
 

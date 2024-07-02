@@ -4,11 +4,15 @@
         <v-card-title style="background-color: #4da6e8;" class="justify-center">
           Token Registres and Tokens Created (past {{ num_days }} days)
         </v-card-title>
-        <Line
-          v-if="chartData"
-          :options="chartOptions"
-          :data="chartData"
-        />
+        <v-skeleton-loader
+          :loading="loading"
+          type="card">
+          <Line
+            v-if="chartData"
+            :options="chartOptions"
+            :data="chartData"
+          />
+        </v-skeleton-loader>
       </v-card>
     </div>
   </template>
@@ -44,8 +48,11 @@
       const history = ref(null);
       // const num_days = ref(3);
       const filteredHistory = ref([]);
+      
+      const loading = ref(true);
   
       async function getHistory() {
+        loading.value=true;
         console.log('getting history');
         history.value = await fetchData('history', { days: props.days });
         if (history.value) {
@@ -77,6 +84,7 @@
             datasets: [],
           };
         }
+        loading.value=false;
       }
   
       const chartOptions = {
@@ -206,6 +214,7 @@
         chartData,
         history,
         filteredHistory,
+        loading,
         // num_days,
       };
     },

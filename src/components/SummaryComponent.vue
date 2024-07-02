@@ -6,107 +6,65 @@
         elevation="3"
         >
           <v-card-title class="big-title">Deployments</v-card-title>
-          <v-card-text class ="big-text">{{ titleDeployments }}</v-card-text>
+          <v-skeleton-loader
+            :loading="loading"
+            type="subtitle">
+            <v-card-text v-if="titleDeployments" class ="big-text">{{ titleDeployments }}</v-card-text>
+          </v-skeleton-loader>
         </v-card>
         <v-card
         
         elevation="3"
         >
           <v-card-title class="big-title">Title Escrows Created</v-card-title>
-          <v-card-text class ="big-text">{{ titleCreated }}</v-card-text>
+          <v-skeleton-loader
+            :loading="loading"
+            type="subtitle">
+            <v-card-text v-if="titleCreated" class ="big-text">{{ titleCreated }}</v-card-text>
+          </v-skeleton-loader>
         </v-card>
-        <!-- <v-card v-if="data.uniqueStandalone"     
-        elevation="3"
-        > -->
-          
-          <!-- <v-card-title class="big-title">
-            Standalones
-            <v-icon class="info-icon" size="x-small" v-tooltip:end="'Number of registries that used the Title Escrow Factory without the Deployer'">mdi-information</v-icon>
-          </v-card-title>
-          <v-card-text class ="big-text">{{standalones}}</v-card-text>
-        </v-card> -->
+  
 
       </div>
 
-
-      <!-- <div class="update">
-        <p>Last updated: {{ timestamp }}</p> 
-        <v-icon v-tooltip:top="'click to update data (in the background)'" class="refresh-icon" @click="refreshData">mdi-refresh</v-icon>
-      </div> -->
     </div>
-
-
-    <!-- <div class="uniques">
-      <v-card  class="unique-deployers">
-        <v-card-title :style="{ backgroundColor: '#4da6e8' }">Wallet Addresses</v-card-title>
-        <v-virtual-scroll
-          class="scroller"
-          :height="300"
-          :items="data.uniqueDeployer"
-          :item-height="5"
-        >
-          <template v-slot:default="{ item }">
-            <a :href="scannerUrl + item" target="_blank">{{ item }}</a>
-          </template>
-        </v-virtual-scroll>
-      </v-card>
-      <v-card  class="unique-factory">
-        <v-card-title :style="{ backgroundColor: '#4da6e8' }">Title Escrow Factories</v-card-title>
-        <v-virtual-scroll
-          class="scroller"
-          :height="300"
-          :items="data.uniqueFactory"
-          :item-height="5"
-          :width="300"
-        >
-          <template v-slot:default="{ item }">
-            <a :href="scannerUrl + item" target="_blank">{{ item }}</a>
-          </template>
-        </v-virtual-scroll>
-      </v-card>
-    </div> -->
-      
-        
-      <!-- <v-card  class="unique-standalones" v-if="data.uniqueStandalone">
-        <v-card-title :style="{ backgroundColor: '#4da6e8' }">Standalone Token Registries</v-card-title>
-        <v-virtual-scroll
-          class="scroller"
-          :height="300"
-          :items="data.uniqueStandalone"
-          :item-height="5"
-          :width="300"
-        >
-          <template v-slot:default="{ item }">
-            <a :href="scannerUrl + item" target="_blank">{{ item }}</a>
-          </template>
-        </v-virtual-scroll>
-      </v-card> -->
-    <!-- </div> -->
   </div>
 </template>
 
 <script>
+import { fetchData } from '@/utils';
+import { ref, onMounted } from 'vue';
+
 export default {
   name: 'SummaryComponent',
   props: {
-    data: Object,
-    // timestamp: String,
-    // scannerUrl:String,
-    // refresh:Function,
+    chainId : Number,
+
   },
-  data(){
-    // console.log(this.data);
-    const titleDeployments = this.data[0].totalDeployments;
-    const titleCreated = this.data[0].totalEscrows;
-    // const standalones = this.data.uniqueStandalone && this.data.uniqueStandalone.length > 0 
-    // ? this.data.uniqueStandalone.length
-    // : 0;
+  setup(props){
+
+    const totals = ref(null);
+    const titleDeployments = ref(null);
+    const titleCreated = ref(null);
+    const loading = ref(true);
+
+    async function getTotals () {
+      loading.value=true;
+      totals.value = await fetchData('totalsByChain', {chainId:props.chainId});
+      console.log('totals', totals.value);
+      titleDeployments.value = totals.value[0].totalDeployments;
+      titleCreated.value = totals.value[0].totalEscrows;
+      loading.value=false;
+    }
+   
+    onMounted(()=>{
+      getTotals();
+    })
 
     return {
       titleDeployments,
       titleCreated,
-      // standalones,
-      // standardHeaders,
+      loading,
     }
   },
   methods:{

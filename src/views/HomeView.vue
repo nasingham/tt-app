@@ -4,7 +4,7 @@
       <v-row>
         <h1>TradeTrust Dashboard</h1>
       </v-row>
-      <v-row v-if="totals && networks">
+      <v-row>
         <v-col cols="2" md="2">
             <v-select
             v-model="networkType"
@@ -14,15 +14,19 @@
             ></v-select>
         </v-col>
         <v-col cols="3" md="3">
-          <v-select
-            v-model="selectedNetwork"
-            :items="networks"
-            label="Select Network"
-            item-title="networkName"
-            item-value="chainId"
-            multiple
-            clearable
-            ></v-select>
+          <v-skeleton-loader
+            :loading="loading"
+            type="chip" >
+            <v-select v-if="networks"
+              v-model="selectedNetwork"
+              :items="networks"
+              label="Select Network"
+              item-title="networkName"
+              item-value="chainId"
+              multiple
+              clearable
+              />
+          </v-skeleton-loader>
         </v-col>
         
         <v-col>
@@ -65,7 +69,7 @@
       <v-row>
         <v-col cols="12" md="12">
           <!-- <NetworkTable v-if="totals" :data="totals" /> -->
-          <BarChart v-if="totals" :data="totals" :selectedNetwork="selectedNetwork" :dataset="dataFilter" />
+          <BarChart :data="totals" :selectedNetwork="selectedNetwork" :dataset="dataFilter" />
         </v-col>
         
       </v-row>
@@ -131,29 +135,28 @@ export default {
 
     const networks = ref(null);
     const totals = ref(null);
+
+    const loading = ref(true);
     
-    async function getTotals () {
-      totals.value = await fetchData('totals');
+    async function getNetworks () {
+      loading.value = true;
+      networks.value = await fetchData('networks');
       // console.log('totals',totals.value);
-      networks.value = totals.value.map(item => ({
-        networkName: item.networkName,
-        chainId: item.chainId,
-        networkType: item.network_type}
-      ));
-      console.log('networks',networks.value);
+      // console.log('networks',networks.value);
+      loading.value=false;
       
     };
 
 
     function getNetworkType(networkType){
       if(networkType){
-        const filtered = networks.value.filter(network => network.networkType.toLowerCase() === networkType.value.toLowerCase());
+        const filtered = networks.value.filter(network => network.network_type.toLowerCase() === networkType.value.toLowerCase());
         selectedNetwork.value = [...new Set(filtered.map(item => item.chainId))];
         console.log('testnets',selectedNetwork.value);
       }
     }
-    onMounted(async () => {
-      getTotals();
+    onMounted( () => {
+      getNetworks();
       // getHistory();
     });
 
@@ -199,6 +202,7 @@ export default {
       dataFilter,
       num_days,
       showHistoryByChain,
+      loading,
       
     };
   },

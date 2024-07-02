@@ -2,14 +2,12 @@
     <div class="xdc d-flex flex-column">
         <div>
             <SummaryComponent
-              v-if="totals"
-              :data="totals"
+            :chainId="chainId"
               class="summary"
             />
         </div>
         <div>
-            <DeploymentComponent v-if="uniqueDeployments"
-             :data="uniqueDeployments" 
+            <DeploymentComponent
              scannerUrl="https://xdc.blocksscan.io/address/"
              :chainId="chainId"
              @generate="handleSelection"
@@ -40,7 +38,6 @@ import SummaryComponent from '@/components/SummaryComponent.vue';
 import TokenRegistryComponent from '@/components/TokenRegistryComponent.vue';
 import DeploymentComponent from '@/components/DeploymentComponent.vue';
 import { ref, onMounted } from 'vue';
-import { fetchData } from '@/utils';
   
   export default {
 
@@ -51,47 +48,20 @@ import { fetchData } from '@/utils';
         DeploymentComponent,
     },
     data(){
-        const uniqueDeployments = ref(null);
-        const totalDeployments = ref(0);
         const sepoliaTimestamp = ref(null);
         const chainId = 50;
-        const totals = ref(null);
         const selection = ref(null);
-
-        const getTotals = async() => {
-            totals.value = await fetchData('totalsByChain', {chainId:chainId});
-            // console.log(result[0].totalDeployments);
-        }
-
-        const getUniqueDeployments = async () => {
-            console.log('fetching xdc uniqueDeployments')
-            uniqueDeployments.value = await fetchData('uniqueDeployments',{chainId:chainId});
-            // totalDeployments.value = Object.keys(uniqueDeployments.value).length;
-
-        };
 
         const handleSelection = (selected) => {
             selection.value = selected;
             console.log('prop',selection.value);
         }
 
-        onMounted(()=>{
-            getTotals();
-            getUniqueDeployments();
-        })
-
         return{
-            // sepoliaData,
-            uniqueDeployments,
-            totalDeployments,
             sepoliaTimestamp,
             selection,
             chainId,
-            getUniqueDeployments,
-            fetchData,
             handleSelection,
-            totals,
-            
         }
     }
 

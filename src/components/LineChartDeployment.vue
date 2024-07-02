@@ -1,11 +1,15 @@
 <template>
     <div class="Line">
-        <v-card v-if="historyByChain" elevation="3" rounded="lg">
+        <v-card  elevation="3" rounded="lg">
             <v-card-title style="background-color: #4da6e8;" class="justify-center">Token Registries Created by Network</v-card-title>
-            <Line v-if="chartData"
-            :options="chartOptions"
-            :data="chartData">
-            </Line>
+            <v-skeleton-loader
+                :loading="loading"
+                type="card">
+                <Line v-if="chartData"
+                :options="chartOptions"
+                :data="chartData">
+                </Line>
+            </v-skeleton-loader>
             
         </v-card>
 
@@ -64,9 +68,10 @@ export default{
         // console.log('history', historybyChain);
         const networks = ref([1,50,51,137,80002,101010,11155111,20180427]);
         
-        
-        async function getDeploymentHistory() {
+        const loading = ref(true);
 
+        async function getDeploymentHistory() {
+            loading.value=true;
             const networks = props.selectedNetwork.length ? props.selectedNetwork : [1, 50, 51, 137, 80002, 101010, 11155111, 20180427];
 
             historyByChain.value = await fetchData('historyDeployments', {
@@ -99,13 +104,12 @@ export default{
                 
 
             }else{
-            chartData.value = {
-                labels: [],
-                datasets: [],
-            };
-            
-
-        }
+                chartData.value = {
+                    labels: [],
+                    datasets: [],
+                };
+            }
+            loading.value=false;
         }
 
         
@@ -180,6 +184,7 @@ export default{
             chartOptions,
             chartData,
             historyByChain,
+            loading,
             // networks,
             // selectedNetwork,
         }
