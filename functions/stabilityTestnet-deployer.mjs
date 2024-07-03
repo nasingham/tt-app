@@ -5,7 +5,7 @@ import mysql from 'mysql2/promise';
 import 'dotenv/config';
 
 
-const web3 = new Web3("https://free.testnet.stabilityprotocol.com/zgt/w6arr344usim");
+const web3 = new Web3(`https://free.testnet.stabilityprotocol.com/zgt/${process.env.STABILITY_TEST_KEY}`);
 const deployer = "0xc9A4F6b4f7afAeC816f2CFB715bB92384Fa46BCa";
 
 //ABI of Deployer

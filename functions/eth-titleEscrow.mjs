@@ -4,7 +4,7 @@ import { processEventsTitleEscrow } from './utils.js';
 import mysql from 'mysql2/promise';
 import 'dotenv/config';
 
-const web3 = new Web3('https://eth-mainnet.g.alchemy.com/v2/oYTceCr2171uweAFpcDci_A-434gf1Qj');
+const web3 = new Web3(`https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`);
 const titleEscrowFactory = "0xA38CC56c9291B9C1f52F862dd92326d352e710b8"
 //ABI of Deployer
 const contractABI = [

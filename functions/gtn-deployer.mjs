@@ -3,7 +3,7 @@ import { processEventsDeployer } from './utils.js';
 import mysql from 'mysql2/promise';
 import 'dotenv/config';
 
-const web3 = new Web3("https://gtn.stabilityprotocol.com/zgt/ez9zn4ay90dz");
+const web3 = new Web3(`https://gtn.stabilityprotocol.com/zgt/${process.env.GTN_KEY}`);
 const deployer = "0x163A63415d1bf6DeE66B0624e2313fB9127a599b"
 //ABI of Deployer
 const contractABI = [

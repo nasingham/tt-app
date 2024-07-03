@@ -5,7 +5,7 @@ import mysql from 'mysql2/promise';
 import 'dotenv/config';
 
 
-const web3 = new Web3("https://polygon-amoy.infura.io/v3/48bea089ceb34f579d2381195ca46c1d");
+const web3 = new Web3(`https://polygon-amoy.infura.io/v3/${process.env.INFURA_KEY}`);
 const deployer = "0x274eF26b068C0E100cD3A9bf39998CAe336c8e1f"
 //ABI of Deployer
 const contractABI = [

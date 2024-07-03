@@ -4,7 +4,7 @@ import { processEventsTitleEscrow } from './utils.js';
 import mysql from 'mysql2/promise';
 import 'dotenv/config';
 
-const web3 = new Web3("https://polygon-amoy.infura.io/v3/48bea089ceb34f579d2381195ca46c1d");
+const web3 = new Web3(`https://polygon-amoy.infura.io/v3/${process.env.INFURA_KEY}`);
 const titleEscrowFactory = "0x812A0E71c61A42C8d3d449BdfF51834f85686C73";
 //ABI of Deployer
 const contractABI = [

@@ -5,7 +5,7 @@
         <h1>TradeTrust Dashboard</h1>
       </v-row>
       <v-row>
-        <v-col cols="2" md="2">
+        <v-col cols="3" md="3">
             <v-select
             v-model="networkType"
             :items="network_types"

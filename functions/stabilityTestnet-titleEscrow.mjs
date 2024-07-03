@@ -4,7 +4,7 @@ import { processEventsTitleEscrow } from './utils.js';
 import mysql from 'mysql2/promise';
 import 'dotenv/config';
 
-const web3 = new Web3("https://free.testnet.stabilityprotocol.com/zgt/w6arr344usim");
+const web3 = new Web3(`https://free.testnet.stabilityprotocol.com/zgt/${process.env.STABILITY_TEST_KEY}`);
 const titleEscrowFactory = "0xd334a95bbA0b666981fD067A5Edd505aFB6cFa1d"
 //ABI of Deployer
 const contractABI = [

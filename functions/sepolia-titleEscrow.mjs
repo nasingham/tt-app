@@ -8,7 +8,7 @@ import 'dotenv/config';
 import {processEventsTitleEscrow } from './utils.js';
 
 
-const web3 = new Web3('https://eth-sepolia.g.alchemy.com/v2/oYTceCr2171uweAFpcDci_A-434gf1Qj');
+const web3 = new Web3(`https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`);
 const titleEscrowFactory = "0x5aA71Cc9559bC5e54E9504a81496d9F8454721F5"
 
 // ABI of Deployer

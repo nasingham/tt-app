@@ -4,7 +4,7 @@ import { processEventsDeployer } from './utils.js';
 import mysql from 'mysql2/promise';
 import 'dotenv/config';
 
-const web3 = new Web3('https://eth-mainnet.g.alchemy.com/v2/oYTceCr2171uweAFpcDci_A-434gf1Qj');
+const web3 = new Web3(`https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`);
 const deployer = "0x92470d0Fc33Cbf2f04B39696733806a15eD7eef3"
 //ABI of Deployer
 const contractABI = [
