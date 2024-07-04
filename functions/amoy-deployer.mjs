@@ -142,10 +142,10 @@ export const handler = async (event) => {
             return typeof value === 'bigint' ? value.toString() : value;
         }
 
-        const startBlock = 8177515; //creation block for amoy deployer
-        // const [rows] = await connection.query(`SELECT MAX(deploymentBlockNumber) as latestBlock from deployments where chainId = ${chainId}`);
-        // const startBlock = rows[0].latestBlock;
-        // console.log('startblock', startBlock);
+        // const startBlock = 8177515; //creation block for amoy deployer
+        const [rows] = await connection.query(`SELECT MAX(deploymentBlockNumber) as latestBlock from deployments where chainId = ${chainId}`);
+        const startBlock = rows[0].latestBlock;
+        console.log('startblock', startBlock);
         // const endBlock = Number(await web3.eth.getBlockNumber());
         // const batchSize = 500000; // Adjust this size based on your needs
         // let allEvents = [];

@@ -120,10 +120,10 @@ const contractABI = [
             return typeof value === 'bigint' ? value.toString() : value;
         }
 
-        const startBlock = 4540609; //creation block of amoy title Escrow Factory
-        // const [rows] = await connection.query(`SELECT MAX(titleBlockNumber) as latestBlock from titleEscrowsCreated where chainId = ${chainId}`);
-        // const startBlock = rows[0].latestBlock;
-        // console.log('startblock', startBlock);
+        // const startBlock = 4540609; //creation block of amoy title Escrow Factory
+        const [rows] = await connection.query(`SELECT MAX(titleBlockNumber) as latestBlock from titleEscrowsCreated where chainId = ${chainId}`);
+        const startBlock = rows[0].latestBlock;
+        console.log('startblock', startBlock);
 
         // const endBlock = Number(await web3.eth.getBlockNumber());
         // const batchSize = 500000; // Adjust this size based on your needs
