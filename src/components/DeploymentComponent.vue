@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import { ref, watchEffect, onMounted} from 'vue';
+import { ref, watchEffect, watch, onMounted} from 'vue';
 import { fetchData } from '@/utils';
 
 export default{
@@ -92,7 +92,7 @@ export default{
 
         const getUniqueDeployments = async () => {
             loading.value=true;
-            console.log('fetching sepolia uniqueDeployments')
+            console.log('fetching uniqueDeployments')
             deployments.value = await fetchData('uniqueDeployments',{chainId:props.chainId});
             // totalDeployments.value = Object.keys(uniqueDeployments.value).length;
             num_standalone.value = deployments.value.reduce((acc, obj) => acc + (obj.standalone === 1 ? 1 : 0), 0);
@@ -112,6 +112,12 @@ export default{
             getUniqueDeployments();
         })
 
+        watch(
+            () => [props.chainId, props.scannerUrl],
+            () => {getUniqueDeployments();},
+            { immediate: true }
+        );
+
       
       return{
         deployments,
@@ -129,7 +135,7 @@ export default{
     },
     computed: {
       filteredDeployments() {
-          console.log(this.deploymentType)
+          // console.log(this.deploymentType)
           if (this.deploymentType.length === 0) {
             return this.deployments;
           }

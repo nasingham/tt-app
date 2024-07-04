@@ -33,7 +33,7 @@
 
 <script>
 import { fetchData } from '@/utils';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 
 export default {
   name: 'SummaryComponent',
@@ -60,6 +60,12 @@ export default {
     onMounted(()=>{
       getTotals();
     })
+
+    watch(
+            () => props.chainId ,
+            () => {getTotals();},
+            { immediate: true }
+        );
 
     return {
       titleDeployments,

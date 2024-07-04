@@ -145,7 +145,7 @@ export default {
       // console.log('networks',networks.value);
       loading.value=false;
       
-    };
+    }
 
 
     function getNetworkType(networkType){

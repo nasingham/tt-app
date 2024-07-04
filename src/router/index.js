@@ -9,6 +9,7 @@ import XDCApothemView from '@/views/XDCApothemView.vue'
 import XDCView from '@/views/XDCView.vue'
 import AmoyView from '@/views/AmoyView.vue'
 import PolygonView from '@/views/PolygonView.vue'
+import NetworkView from '@/views/NetworkView.vue'
 
 
 const routes = [
@@ -24,6 +25,11 @@ const routes = [
     // this generates a separate chunk (About.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import('../views/AboutView.vue')
+  },
+  {
+    path: '/network/:id',
+    name: 'networkView',
+    component: NetworkView,
   },
   {
     path: '/sepolia',
