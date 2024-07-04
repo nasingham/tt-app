@@ -1,14 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import HomeView from '@/views/HomeView.vue'
-import SepoliaView from '@/views/SepoliaView.vue'
-import EthView from '@/views/EthView.vue'
-import StabilityView from '@/views/StabilityView.vue'
-import StabilityTestView from '@/views/StabilityTestView.vue'
-import XDCApothemView from '@/views/XDCApothemView.vue'
-import XDCView from '@/views/XDCView.vue'
-import AmoyView from '@/views/AmoyView.vue'
-import PolygonView from '@/views/PolygonView.vue'
 import NetworkView from '@/views/NetworkView.vue'
 
 
@@ -31,46 +23,6 @@ const routes = [
     name: 'networkView',
     component: NetworkView,
   },
-  {
-    path: '/sepolia',
-    name: 'sepolia',
-    component: SepoliaView,
-  },
-  {
-    path: '/ethereum',
-    name: 'eth',
-    component: EthView,
-  },
-  {
-    path: '/gtn',
-    name: 'gtn',
-    component: StabilityView,
-  },
-  {
-    path:'/stability-testnet',
-    name: 'stabilityTest',
-    component: StabilityTestView,
-  },
-  {
-    path:'/xdc-apothem',
-    name: 'apothem',
-    component: XDCApothemView,
-  },
-  {
-    path: '/xdc',
-    name: 'xdc',
-    component: XDCView,
-  },
-  {
-    path: '/polygon',
-    name: 'polygon',
-    component: PolygonView,
-  },
-  {
-    path: '/polygon-amoy',
-    name: 'amoy',
-    component: AmoyView,
-  }
 ]
 
 const router = createRouter({
