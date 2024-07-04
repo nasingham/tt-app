@@ -24,37 +24,8 @@ jobs:
     - name: Run deployer.mjs
       run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/deployer"
 
-    - name: Run sepolia-titleEscrow.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-titleEscrow"
-    
-
-    - name: Run eth-titleEscrow.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/eth-titleEscrow"
-      
-
-    - name: Run gtn-titleEscrow.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/gtn-titleEscrow"
-    
-
-    - name: Run stabilityTestnet-titleEscrow.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/stabilityTestnet-titleEscrow"
-
-
-    - name: Run polygon-titleEscrow.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/polygon-titleEscrow"
-
-
-    - name: Run amoy-titleEscrow.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/amoy-titleEscrow"
-
-
-    - name: Run xdc-titleEscrow.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/xdc-titleEscrow"
-
-
-    - name: Run apothem-titleEscrow.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/apothem-titleEscrow"
-
+    - name: Run titleEscrowsCreated.mjs
+      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/titleEscrowsCreated"
     
     
 
