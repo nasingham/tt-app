@@ -1,119 +1,99 @@
 // const {Web3}  = require('web3');
 import Web3 from 'web3';
-import { processEventsDeployer } from './utils.js';
+import { processEventsTitleEscrow } from './utils.js';
 import mysql from 'mysql2/promise';
 import 'dotenv/config';
 import { chainInfo } from './utils.js';
 
-//ABI of Deployer
+//ABI of TitleEscrowFactory
 const contractABI = [
     {
-    "inputs": [
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
         {
-        "internalType": "address",
-        "name": "_logic",
-        "type": "address"
+          "indexed": true,
+          "internalType": "address",
+          "name": "titleEscrow",
+          "type": "address"
         },
         {
-        "internalType": "bytes",
-        "name": "_data",
-        "type": "bytes"
+          "indexed": true,
+          "internalType": "address",
+          "name": "tokenRegistry",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
         }
-    ],
-    "stateMutability": "payable",
-    "type": "constructor"
+      ],
+      "name": "TitleEscrowCreated",
+      "type": "event"
     },
     {
-    "anonymous": false,
-    "inputs": [
+      "inputs": [
         {
-        "indexed": false,
-        "internalType": "address",
-        "name": "previousAdmin",
-        "type": "address"
-        },
-        {
-        "indexed": false,
-        "internalType": "address",
-        "name": "newAdmin",
-        "type": "address"
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
         }
-    ],
-    "name": "AdminChanged",
-    "type": "event"
-    },
-    {
-    "anonymous": false,
-    "inputs": [
+      ],
+      "name": "create",
+      "outputs": [
         {
-        "indexed": true,
-        "internalType": "address",
-        "name": "beacon",
-        "type": "address"
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
-    ],
-    "name": "BeaconUpgraded",
-    "type": "event"
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
     },
     {
-    "anonymous": false,
-    "inputs": [
+      "inputs": [
         {
-        "indexed": true,
-        "internalType": "address",
-        "name": "implementation",
-        "type": "address"
+          "internalType": "address",
+          "name": "tokenRegistry",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
         }
-    ],
-    "name": "Upgraded",
-    "type": "event"
-    },
-    {
-    "stateMutability": "payable",
-    "type": "fallback"
-    },
-    {
-    "stateMutability": "payable",
-    "type": "receive"
-    },
-    {
-    "anonymous": false,
-    "inputs": [
+      ],
+      "name": "getAddress",
+      "outputs": [
         {
-        "indexed": true,
-        "internalType": "address",
-        "name": "deployed",
-        "type": "address"
-        },
-        {
-        "indexed": true,
-        "internalType": "address",
-        "name": "implementation",
-        "type": "address"
-        },
-        {
-        "indexed": true,
-        "internalType": "address",
-        "name": "deployer",
-        "type": "address"
-        },
-        {
-        "indexed": false,
-        "internalType": "address",
-        "name": "titleEscrowFactory",
-        "type": "address"
-        },
-        {
-        "indexed": false,
-        "internalType": "bytes",
-        "name": "params",
-        "type": "bytes"
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
-    ],
-    "name": "Deployment",
-    "type": "event"
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "implementation",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     }
-]
+  ]
 
 function bigintReplacer(key, value) {
     return typeof value === 'bigint' ? value.toString() : value;
@@ -125,14 +105,14 @@ export const handler = async (event) => {
         const response = [];
         for (const chainId in chainInfo) {
             if (Object.prototype.hasOwnProperty.call(chainInfo, chainId)) {
-                console.log(`fetching deployment ${chainId}`);
+                console.log(`fetching titles ${chainId}`);
 
                 const chain = chainInfo[chainId];
                 const rpcUrl = chain.rpcUrl;
                 const web3 = new Web3(rpcUrl);
-                const deployer = chain.deployer;
+                const titleEscrowFactory = chain.titleEscrowFactory;
                 await web3.eth.net.isListening();
-                console.log('deployer listening');
+                console.log('listening in titles');
 
 
                 console.log('connecting to db');
@@ -145,14 +125,12 @@ export const handler = async (event) => {
                 });
                 console.log('connected to db');
 
-
-                // const chainId = 80002; //amoy networkID
-                const contract = new web3.eth.Contract(contractABI, deployer);
+                const contract = new web3.eth.Contract(contractABI, titleEscrowFactory);
 
                 
 
-                // const startBlock = 8177515; //creation block for amoy deployer
-                const [rows] = await connection.query(`SELECT MAX(deploymentBlockNumber) as latestBlock from deployments where chainId = ${chainId}`);
+                
+                const [rows] = await connection.query(`SELECT MAX(titleBlockNumber) as latestBlock from titleEscrowsCreated where chainId = ${chainId}`);
                 const startBlock = rows[0].latestBlock;
                 console.log('startblock', startBlock);
                 const endBlock = Number(await web3.eth.getBlockNumber());
@@ -162,7 +140,7 @@ export const handler = async (event) => {
 
                 const getBatchEvents = async (fromBlock, toBlock) => {
                     // console.log('fromblock ', fromBlock);
-                    return await contract.getPastEvents('Deployment', {
+                    return await contract.getPastEvents('TitleEscrowCreated', {
                         fromBlock: fromBlock,
                         toBlock: toBlock,
                     });
@@ -180,25 +158,25 @@ export const handler = async (event) => {
                     allEvents = allEvents.concat(events);
                 });
 
-                // const events = await contract.getPastEvents('Deployment',{
+                // const events = await contract.getPastEvents('TitleEscrowCreated',{
                 //     fromBlock: startBlock,
                 //     toBlock: 'latest',
                 // })
                 if (allEvents.length){
-                    const processed = processEventsDeployer(allEvents);
+                    const processed = processEventsTitleEscrow(allEvents);
 
             
-                    // const deleteQuery = 'DELETE FROM deployments where networkId';
+                    
                     console.log('inserting into db');
-                    const insertQuery = 'INSERT IGNORE INTO deployments (txnHash, chainId, deploymentBlockNumber, walletAddress, titleEscrowFactory, implementation, tokenRegistry) VALUES ?';
-                    const values = processed.deployments.map(event => [
+                    const insertQuery = 'INSERT IGNORE INTO titleEscrowsCreated (txnHash, chainId, titleBlockNumber, tokenRegistry, tokenId, titleEscrow, removed) VALUES ?';
+                    const values = processed.titleEscrowsCreated.map(event => [
                         event.txnHash,
                         chainId,
-                        event.deploymentBlockNumber,
-                        event.walletAddress,
-                        event.titleEscrowFactory,
-                        event.implementation,
-                        event.tokenRegistry
+                        event.titleBlockNumber,
+                        event.tokenRegistry,
+                        event.tokenId,
+                        event.titleEscrow,
+                        event.removed
                     ]);
                     response.push(values);
             
@@ -232,7 +210,7 @@ export const handler = async (event) => {
                 'Content-Type': 'application/json',
                 'Access-Control-Allow-Origin': '*'
             },
-            body: JSON.stringify({ error: 'Failed deployer fetching data' })
+            body: JSON.stringify({ error: 'Failed titles fetching data' })
         };
     }
 };

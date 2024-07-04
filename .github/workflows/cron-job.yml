@@ -21,50 +21,36 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Run sepolia-deployer.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-deployer"
+    - name: Run deployer.mjs
+      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/deployer"
 
     - name: Run sepolia-titleEscrow.mjs
       run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/sepolia-titleEscrow"
     
-    - name: Run eth-deployer.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/eth-deployer"
 
     - name: Run eth-titleEscrow.mjs
       run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/eth-titleEscrow"
       
-    - name: Run gtn-deployer.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/gtn-deployer"
 
     - name: Run gtn-titleEscrow.mjs
       run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/gtn-titleEscrow"
     
-    - name: Run stabilityTestnet-deployer.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/stabilityTestnet-deployer"
 
     - name: Run stabilityTestnet-titleEscrow.mjs
       run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/stabilityTestnet-titleEscrow"
 
-    - name: Run polygon-deployer.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/polygon-deployer"
 
     - name: Run polygon-titleEscrow.mjs
       run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/polygon-titleEscrow"
 
-    - name: Run amoy-deployer.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/amoy-deployer"
 
     - name: Run amoy-titleEscrow.mjs
       run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/amoy-titleEscrow"
 
-    - name: Run xdc-deployer.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/xdc-deployer"
 
     - name: Run xdc-titleEscrow.mjs
       run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/xdc-titleEscrow"
 
-    - name: Run apothem-deployer.mjs
-      run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/apothem-deployer"
 
     - name: Run apothem-titleEscrow.mjs
       run: curl -X POST "https://tradetrust-scan.netlify.app/.netlify/functions/apothem-titleEscrow"
